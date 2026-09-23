@@ -1,0 +1,223 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block extra_css %}
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/owner_delivery_area.css' %}">
+
+{% endblock %}
+
+{% block page_title %}
+Delivery Areas
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <a href="{% url 'owner_dashboard' %}">
+        ← Back to Dashboard
+    </a>
+
+    <h1>
+        Delivery Area Management
+    </h1>
+
+    <p>
+        Manage localities and pincodes where delivery is available.
+    </p>
+
+</div>
+
+
+<!-- Statistics -->
+
+<div>
+
+    <div>
+        <span>Total Areas</span>
+        <strong>{{ total_areas }}</strong>
+    </div>
+
+    <div>
+        <span>Available</span>
+        <strong>{{ available_areas }}</strong>
+    </div>
+
+    <div>
+        <span>Unavailable</span>
+        <strong>{{ unavailable_areas }}</strong>
+    </div>
+
+</div>
+
+
+<!-- Add Delivery Area -->
+
+<div>
+
+    <h3>
+        Add Delivery Area
+    </h3>
+
+    <form
+        method="POST"
+        action="{% url 'add_delivery_area' %}">
+
+        {% csrf_token %}
+
+        <input
+            type="text"
+            name="locality"
+            placeholder="Locality"
+            required>
+
+        <input
+            type="text"
+            name="pincode"
+            placeholder="Pincode"
+            maxlength="10"
+            required>
+
+        <input
+            type="number"
+            name="delivery_charge"
+            placeholder="Delivery Charge"
+            min="0"
+            step="0.01"
+            value="0">
+
+        <label>
+
+            <input
+                type="checkbox"
+                name="is_available"
+                checked>
+
+            Available for delivery
+
+        </label>
+
+        <button type="submit">
+            Add Area
+        </button>
+
+    </form>
+
+</div>
+
+
+<!-- Search -->
+
+<form method="GET">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search locality or pincode..."
+        value="{{ search }}">
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>
+
+
+<!-- Areas -->
+
+<table>
+
+    <thead>
+
+        <tr>
+
+            <th>#</th>
+
+            <th>Locality</th>
+
+            <th>Pincode</th>
+
+            <th>Delivery Charge</th>
+
+            <th>Status</th>
+
+            <th>Action</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for area in areas %}
+
+        <tr>
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+            <td>
+                {{ area.locality }}
+            </td>
+
+            <td>
+                {{ area.pincode }}
+            </td>
+
+            <td>
+                ₹{{ area.delivery_charge }}
+            </td>
+
+            <td>
+
+                {% if area.is_available %}
+                    Available
+                {% else %}
+                    Unavailable
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                <a
+                    href="{% url 'edit_delivery_area' area.id %}">
+                    Edit
+                </a>
+
+                <a
+                    href="{% url 'toggle_delivery_area' area.id %}">
+
+                    {% if area.is_available %}
+                        Disable
+                    {% else %}
+                        Enable
+                    {% endif %}
+
+                </a>
+
+            </td>
+
+        </tr>
+
+    {% empty %}
+
+        <tr>
+
+            <td colspan="6">
+                No Delivery Areas Found
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

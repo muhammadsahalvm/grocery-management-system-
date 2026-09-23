@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Salam Mart | Owner Registration</title>
+
+    <!-- Google Font -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/registration.css' %}">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="background-overlay"></div>
+
+<div class="auth-container">
+
+    <!-- LEFT PANEL -->
+
+    <div class="left-section">
+
+        <div class="logo-box">
+
+            <img src="{% static 'images/salammartlogo.png' %}" alt="Logo">
+
+        </div>
+
+        <h1>Create Account</h1>
+
+        <p class="subtitle">
+
+            Your nighbourhood grocery store at your finger tip.
+
+        </p>
+
+        {% if error %}
+
+        <div class="error-box">
+
+            {{ error }}
+
+        </div>
+
+        {% endif %}
+
+        <form method="POST" action="{% url 'owner_registration' %}" id="registerForm">
+
+            {% csrf_token %}
+
+            <!-- Name -->
+
+            <div class="input-group">
+
+                <label>Full Name</label>
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        placeholder="Enter Full Name"
+                        required>
+
+                </div>
+
+            </div>
+
+            <!-- Username -->
+
+            <div class="input-group">
+
+                <label>Username</label>
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-at"></i>
+
+                    <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        placeholder="Choose Username"
+                        required>
+
+                </div>
+
+            </div>
+
+            <!-- Password -->
+
+            <div class="input-group">
+
+                <label>Password</label>
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Enter Password"
+                        required>
+
+                    <span class="togglePassword">
+
+                        <i class="fa-solid fa-eye"></i>
+
+                    </span>
+
+                </div>
+
+                <div class="strength-meter">
+
+                    <div class="strength-bar"></div>
+
+                </div>
+
+                <small id="strengthText">
+                    Password Strength
+                </small>
+
+            </div>
+
+            <!-- Confirm Password -->
+
+            <div class="input-group">
+
+                <label>Confirm Password</label>
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <input
+                        type="password"
+                        name="confirm_password"
+                        id="confirmPassword"
+                        placeholder="Confirm Password"
+                        required>
+
+                    <span class="toggleConfirmPassword">
+
+                        <i class="fa-solid fa-eye"></i>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button class="login-btn" type="submit">
+
+                <i class="fa-solid fa-user-plus"></i>
+
+                Create Account
+
+            </button>
+
+        </form>
+
+        <div class="divider">
+
+            <span></span>
+
+            <p>Salam Mart</p>
+
+            <span></span>
+
+        </div>
+
+        <div class="register-link">
+
+            Already have an account?
+
+            <a href="{% url 'owner_login' %}">
+
+                Login
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+
+    <div class="right-section">
+
+        <div class="image-container">
+
+            <img
+                src="{% static 'images/grocery.png' %}"
+                alt="Illustration">
+
+        </div>
+
+        <div class="floating-card top-card">
+
+            <i class="fa-solid fa-store"></i>
+
+            <div>
+
+                <h3>Manage Products</h3>
+
+                <p>Add & update inventory easily</p>
+
+            </div>
+
+        </div>
+
+        <div class="floating-card bottom-card">
+
+            <i class="fa-solid fa-chart-line"></i>
+
+            <div>
+
+                <h3>Business Growth</h3>
+
+                <p>Track your store performance</p>
+
+            </div>
+
+        </div>
+
+        <div class="stats-card">
+
+            <h2>5000+</h2>
+
+            <p>Orders Delivered</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{% static 'js/registration.js' %}"></script>
+
+</body>
+
+</html>

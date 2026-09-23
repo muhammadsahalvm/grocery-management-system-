@@ -1,0 +1,553 @@
+{% extends 'base/base_user.html' %}
+{% load static %}
+
+{% block title %}SalamMart | Fresh Groceries For A Healthier You{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user_home.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- ==========================================================================
+     1. HERO SECTION (Modern, Clean, High-End Grocery Shopping)
+     ========================================================================== -->
+<section class="home-hero-section" aria-labelledby="hero-main-title">
+    <div class="hero-container">
+        <div class="hero-copy-col">
+            <span class="hero-eyebrow">
+                <i class="bi bi-patch-check-fill" aria-hidden="true"></i> 100% Organic & Farm Fresh
+            </span>
+            <h1 id="hero-main-title" class="hero-title">
+                Fresh Groceries.<br>
+                <span>For A Healthier You.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Quality products. Convenient delivery. Everything you need for everyday grocery shopping, delivered to
+                your doorstep.
+            </p>
+            <div class="hero-actions">
+                <a href="#products" class="btn-hero-primary">
+                    <span>Shop Fresh</span>
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
+                <a href="#categories" class="btn-hero-secondary">
+                    <span>Explore Categories</span>
+                </a>
+            </div>
+
+            <!-- Hero Mini Trust Strip -->
+            <div class="hero-trust-strip" aria-label="Core benefits">
+                <div class="hero-trust-item">
+                    <div class="trust-icon-box">
+                        <i class="bi bi-basket2-fill" aria-hidden="true"></i>
+                    </div>
+                    <div class="trust-text">
+                        <strong>Fresh Products</strong>
+                        <small>Handpicked with care</small>
+                    </div>
+                </div>
+                <div class="hero-trust-item">
+                    <div class="trust-icon-box">
+                        <i class="bi bi-lightning-charge-fill" aria-hidden="true"></i>
+                    </div>
+                    <div class="trust-text">
+                        <strong>Fast Delivery</strong>
+                        <small>On time, every time</small>
+                    </div>
+                </div>
+                <div class="hero-trust-item">
+                    <div class="trust-icon-box">
+                        <i class="bi bi-shield-check" aria-hidden="true"></i>
+                    </div>
+                    <div class="trust-text">
+                        <strong>Secure Payment</strong>
+                        <small>Safe & trusted</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-visual-col" aria-hidden="true">
+            <div class="hero-photo-wrapper">
+                <img src="{% static 'images/hero_sctn.png' %}" alt=""
+                    class="hero-photo-img">
+                <div class="hero-photo-overlay"></div>
+                <span class="hero-editorial-label hero-editorial-label-top">Picked with care</span>
+                <span class="hero-editorial-label hero-editorial-label-bottom">Everyday freshness</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     2. SHOP BY CATEGORY (Dynamic from Django context)
+     ========================================================================== -->
+<section class="home-section category-showcase-section" id="categories" aria-labelledby="category-section-title">
+    <div class="section-container">
+        <div class="section-header section-heading">
+            <div>
+                <span class="section-tag section-heading__eyebrow">Quick Access</span>
+                <h2 id="category-section-title" class="section-title section-heading__title">Shop by Category</h2>
+                <p class="section-desc section-heading__description">Browse the fresh essentials that make everyday shopping simple.</p>
+            </div>
+            <a href="#products" class="section-header-link section-heading__action">
+                <span>View All Categories</span>
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div class="category-cards-grid">
+            <!-- All Categories Shortcut -->
+            <a href="{% url 'user_home' %}#products" class="category-item-card category-all-card">
+                <div class="category-card-icon-wrap">
+                    <i class="bi bi-grid-fill"></i>
+                </div>
+                <strong class="category-card-title">All Categories</strong>
+                <small class="category-card-count">Full Catalog</small>
+            </a>
+
+            <!-- Dynamic Categories from Database -->
+            {% for c in categories %}
+            <a href="?category={{ c.id }}{% if search %}&search={{ search|urlencode }}{% endif %}#products"
+                class="category-item-card {% if selected_category == c.id|stringformat:'s' %}is-active{% endif %}">
+                <div class="category-card-icon-wrap">
+                    {% if c.category_image %}
+                    <img src="/media/{{ c.category_image }}" alt="{{ c.category_name }}" class="cat-img" loading="lazy">
+                    {% else %}
+                    {% if "veg" in c.category_name|lower %}
+                    <span class="cat-emoji">🥦</span>
+                    {% elif "fruit" in c.category_name|lower %}
+                    <span class="cat-emoji">🍎</span>
+                    {% elif "diar" in c.category_name|lower or "milk" in c.category_name|lower %}
+                    <span class="cat-emoji">🥛</span>
+                    {% elif "back" in c.category_name|lower or "bake" in c.category_name|lower %}
+                    <span class="cat-emoji">🥐</span>
+                    {% elif "drink" in c.category_name|lower or "bever" in c.category_name|lower %}
+                    <span class="cat-emoji">🧃</span>
+                    {% elif "snack" in c.category_name|lower %}
+                    <span class="cat-emoji">🍿</span>
+                    {% elif "house" in c.category_name|lower %}
+                    <span class="cat-emoji">🧼</span>
+                    {% else %}
+                    <span class="cat-emoji">🌿</span>
+                    {% endif %}
+                    {% endif %}
+                </div>
+                <strong class="category-card-title">{{ c.category_name }}</strong>
+                <small class="category-card-count">Fresh Stock</small>
+            </a>
+            {% empty %}
+            <div class="empty-category-notice">
+                <p>Categories will appear here once loaded.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     3. FEATURES / TRUST STRIP (Pill style matching reference design)
+     ========================================================================== -->
+<section class="home-features-strip" aria-label="SalamMart Trust & Confidence Guarantee">
+    <div class="features-pill-container">
+        <div class="feature-item">
+            <div class="feature-icon-circle">
+                <i class="bi bi-flower1"></i>
+            </div>
+            <div class="feature-text">
+                <strong>100% Fresh</strong>
+                <small>Farm to table</small>
+            </div>
+        </div>
+        <div class="feature-divider" aria-hidden="true"></div>
+        <div class="feature-item">
+            <div class="feature-icon-circle">
+                <i class="bi bi-boxes"></i>
+            </div>
+            <div class="feature-text">
+                <strong>Wide Selection</strong>
+                <small>Everything you need</small>
+            </div>
+        </div>
+        <div class="feature-divider" aria-hidden="true"></div>
+        <div class="feature-item">
+            <div class="feature-icon-circle">
+                <i class="bi bi-truck"></i>
+            </div>
+            <div class="feature-text">
+                <strong>Reliable Delivery</strong>
+                <small>On time, every time</small>
+            </div>
+        </div>
+        <div class="feature-divider" aria-hidden="true"></div>
+        <div class="feature-item">
+            <div class="feature-icon-circle">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <div class="feature-text">
+                <strong>Trusted Quality</strong>
+                <small>Safe & healthy</small>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     4. ACTIVE SEARCH OR FILTER RESULTS (If search/category/section applied)
+     ========================================================================== -->
+{% if search or selected_category or selected_section %}
+<section class="home-section filtered-results-section" id="products" aria-labelledby="filtered-results-title">
+    <div class="section-container">
+        <div class="section-header section-heading">
+            <div>
+            <span class="section-tag section-heading__eyebrow">Search & Filter Results</span>
+            <h2 id="filtered-results-title" class="section-title section-heading__title">
+                    {% if search %}Results for &ldquo;{{ search }}&rdquo;{% else %}Filtered Products{% endif %}
+                </h2>
+            </div>
+            <a href="{% url 'user_home' %}#products" class="clear-filters-btn section-heading__action">
+                <span>Clear All Filters</span>
+                <i class="bi bi-x-circle-fill"></i>
+            </a>
+        </div>
+
+        <!-- Section Filters Bar -->
+        {% if sections %}
+        <div class="filter-pills-bar" aria-label="Filter by aisle/section">
+            <span class="filter-pills-label">Aisle:</span>
+            <a href="{% url 'user_home' %}{% if search or selected_category %}?{% if search %}search={{ search|urlencode }}{% endif %}{% if search and selected_category %}&{% endif %}{% if selected_category %}category={{ selected_category }}{% endif %}{% endif %}#products"
+                class="filter-pill-chip {% if not selected_section %}is-active{% endif %}">
+                All Aisles
+            </a>
+            {% for s in sections %}
+            <a href="?section={{ s.id }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}#products"
+                class="filter-pill-chip {% if selected_section == s.id|stringformat:'s' %}is-active{% endif %}">
+                {{ s.section_name }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Filtered Product Grid -->
+        <div class="store-product-grid">
+            {% for p in products %}
+            <article class="store-product-card" id="product-{{ p.id }}">
+                <!-- Card Top Header (Wishlist + Discount Badge) -->
+                <div class="card-top-bar">
+                    {% if p.offer_price and p.actual_price > p.offer_price %}
+                    <span class="discount-badge">Offer</span>
+                    {% else %}
+                    <span></span>
+                    {% endif %}
+                    <a href="{% url 'add_to_wishlist' p.id %}" class="card-wishlist-btn"
+                        title="Add {{ p.product_name }} to wishlist" aria-label="Add {{ p.product_name }} to wishlist">
+                        <i class="bi bi-heart"></i>
+                    </a>
+                </div>
+
+                <!-- Product Image Container -->
+                <a href="{% url 'user_product_detail' id=p.id %}" class="product-card-image"
+                    aria-label="View details for {{ p.product_name }}">
+                    {% if p.product_image %}
+                    <img src="/media/{{ p.product_image }}" alt="{{ p.product_name }}" loading="lazy">
+                    {% else %}
+                    <div class="product-image-fallback">
+                        <i class="bi bi-basket2"></i>
+                    </div>
+                    {% endif %}
+                </a>
+
+                <!-- Product Info Body -->
+                <div class="product-card-body">
+                    <span class="product-card-category">{{ p.category.category_name }}</span>
+                    <h3 class="product-card-title">
+                        <a href="{% url 'user_product_detail' id=p.id %}">{{ p.product_name }}</a>
+                    </h3>
+                    <p class="product-card-unit">{{ p.section.section_name }}</p>
+
+                    <!-- Pricing Row -->
+                    <div class="product-card-price-row">
+                        <div class="price-group">
+                            {% if p.offer_price %}
+                            <strong class="price-current">₹{{ p.offer_price }}</strong>
+                            <del class="price-original">₹{{ p.actual_price }}</del>
+                            {% else %}
+                            <strong class="price-current">₹{{ p.actual_price }}</strong>
+                            {% endif %}
+                        </div>
+                        <div class="stock-indicator">
+                            {% if p.quantity == 0 %}
+                            <span class="stock-badge stock-out">● Sold out</span>
+                            {% elif p.quantity <= 10 %} <span class="stock-badge stock-low">● {{ p.quantity }}
+                                left</span>
+                                {% else %}
+                                <span class="stock-badge stock-in">● In stock</span>
+                                {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Card Action -->
+                    <div class="product-card-action">
+                        {% if p.quantity > 0 %}
+                        <form method="POST" action="{% url 'add_to_cart' p.id %}" class="add-to-cart-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn-add-cart">
+                                <i class="bi bi-cart-plus-fill" aria-hidden="true"></i>
+                                <span>Add to Cart</span>
+                            </button>
+                        </form>
+                        {% else %}
+                        <button type="button" class="btn-add-cart is-disabled" disabled>
+                            <span>Unavailable</span>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% empty %}
+            <div class="empty-search-state">
+                <div class="empty-icon-wrap">
+                    <i class="bi bi-search"></i>
+                </div>
+                <h3>No products found</h3>
+                <p>We couldn't find any products matching your criteria. Try adjusting your search term or browse all
+                    categories.</p>
+                <a href="{% url 'user_home' %}#products" class="btn-hero-primary" style="display: inline-flex;">
+                    <span>View All Groceries</span>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ==========================================================================
+     5. PROGRESSIVE SINGLE-PAGE PRODUCT SECTIONS
+     (The user can browse the entire catalog just by scrolling the homepage!)
+     ========================================================================== -->
+<div id="products"></div>
+
+{% for c in categories %}
+<section class="home-section catalog-category-section" id="category-{{ c.id }}"
+    aria-labelledby="cat-heading-{{ c.id }}">
+    <div class="section-container">
+        <div class="section-header section-heading">
+            <div>
+                <span class="section-tag section-heading__eyebrow">Fresh picks</span>
+                <h2 id="cat-heading-{{ c.id }}" class="section-title section-heading__title">{{ c.category_name }}</h2>
+                <p class="section-desc section-heading__description">Freshly harvested and handpicked for your everyday kitchen.</p>
+            </div>
+            <a href="?category={{ c.id }}#products" class="section-header-link section-heading__action">
+                <span>View All {{ c.category_name }}</span>
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <!-- Product Cards Grid for this Category -->
+        <div class="store-product-grid">
+            {% for p in c.product_set.all %}
+            {% if p.is_active %}
+            <article class="store-product-card" id="cat-product-{{ p.id }}">
+                <!-- Card Top Bar -->
+                <div class="card-top-bar">
+                    {% if p.offer_price and p.actual_price > p.offer_price %}
+                    <span class="discount-badge">Offer</span>
+                    {% else %}
+                    <span></span>
+                    {% endif %}
+                    <a href="{% url 'add_to_wishlist' p.id %}" class="card-wishlist-btn"
+                        title="Add {{ p.product_name }} to wishlist" aria-label="Add {{ p.product_name }} to wishlist">
+                        <i class="bi bi-heart"></i>
+                    </a>
+                </div>
+
+                <!-- Product Image Area -->
+                <a href="{% url 'user_product_detail' id=p.id %}" class="product-card-image"
+                    aria-label="View {{ p.product_name }}">
+                    {% if p.product_image %}
+                    <img src="/media/{{ p.product_image }}" alt="{{ p.product_name }}" loading="lazy">
+                    {% else %}
+                    <div class="product-image-fallback">
+                        <i class="bi bi-basket2"></i>
+                    </div>
+                    {% endif %}
+                </a>
+
+                <!-- Card Body -->
+                <div class="product-card-body">
+                    <span class="product-card-category">{{ c.category_name }}</span>
+                    <h3 class="product-card-title">
+                        <a href="{% url 'user_product_detail' id=p.id %}">{{ p.product_name }}</a>
+                    </h3>
+                    <p class="product-card-unit">{{ p.section.section_name }}</p>
+
+                    <!-- Pricing -->
+                    <div class="product-card-price-row">
+                        <div class="price-group">
+                            {% if p.offer_price %}
+                            <strong class="price-current">₹{{ p.offer_price }}</strong>
+                            <del class="price-original">₹{{ p.actual_price }}</del>
+                            {% else %}
+                            <strong class="price-current">₹{{ p.actual_price }}</strong>
+                            {% endif %}
+                        </div>
+                        <div class="stock-indicator">
+                            {% if p.quantity == 0 %}
+                            <span class="stock-badge stock-out">● Sold out</span>
+                            {% elif p.quantity <= 10 %} <span class="stock-badge stock-low">● {{ p.quantity }}
+                                left</span>
+                                {% else %}
+                                <span class="stock-badge stock-in">● In stock</span>
+                                {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Add to Cart Action -->
+                    <div class="product-card-action">
+                        {% if p.quantity > 0 %}
+                        <form method="POST" action="{% url 'add_to_cart' p.id %}" class="add-to-cart-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn-add-cart">
+                                <i class="bi bi-cart-plus-fill" aria-hidden="true"></i>
+                                <span>Add to Cart</span>
+                            </button>
+                        </form>
+                        {% else %}
+                        <button type="button" class="btn-add-cart is-disabled" disabled>
+                            <span>Currently Unavailable</span>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endif %}
+            {% empty %}
+            <div class="empty-category-inline">
+                <p>No products currently listed under {{ c.category_name }}. Check back soon!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Mid-catalog Promotional Banner after the 2nd category -->
+{% if forloop.counter == 2 %}
+<section class="home-promo-section" id="offers" aria-label="Promotional Daily Deals">
+    <div class="promo-container">
+        <div class="promo-card">
+            <div class="promo-content-col">
+                <span class="promo-badge">Up to 30% OFF</span>
+                <h2 class="promo-heading">Fresh Deals Everyday</h2>
+                <p class="promo-subtext">Save on wholesome fruits, farm greens, and daily breakfast staples. Freshness
+                    that fits your budget.</p>
+                <a href="#products" class="btn-promo-cta">
+                    <span>Shop Offers</span>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="promo-visual-col" aria-hidden="true">
+                <img src="{% static 'images/promo_deals.jpg' %}" alt="Fresh deals - seasonal fruits and vegetables"
+                    class="promo-img">
+                <div class="promo-circle-badge">
+                    <strong>Fresh Savings</strong>
+                    <small>Happier Homes</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endfor %}
+
+<!-- ==========================================================================
+     6. WHY CHOOSE SALAM MART (Trust Section)
+     ========================================================================== -->
+<section class="home-section why-choose-section" aria-labelledby="why-choose-title">
+    <div class="section-container">
+        <div class="section-header section-heading center-header">
+            <div>
+            <span class="section-tag section-heading__eyebrow">Quality Assured</span>
+            <h2 id="why-choose-title" class="section-title section-heading__title">Why Choose SalamMart?</h2>
+            <p class="section-desc section-heading__description">Experience grocery shopping designed for modern living with uncompromising
+                    quality.</p>
+            </div>
+        </div>
+
+        <div class="why-choose-grid">
+            <div class="why-card">
+                <div class="why-icon-wrap">
+                    <i class="bi bi-patch-check"></i>
+                </div>
+                <h3>Fresh & Quality</h3>
+                <p>Locally sourced from certified regional growers. Strictly inspected for grade-A freshness before
+                    packing.</p>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon-wrap">
+                    <i class="bi bi-bag-check"></i>
+                </div>
+                <h3>Wide Selection</h3>
+                <p>From kitchen staples and dairy to daily beverages and household cleaning supplies, everything in one
+                    spot.</p>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon-wrap">
+                    <i class="bi bi-stopwatch"></i>
+                </div>
+                <h3>Reliable Delivery</h3>
+                <p>Speedy doorstep fulfillment in 30-60 minutes or flexible delivery time slots tailored to your
+                    schedule.</p>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon-wrap">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+                <h3>Trusted Shopping</h3>
+                <p>Transparent pricing, cash on delivery, secure checkout, and hassle-free replacements if not 100%
+                    satisfied.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     7. FINAL CALL TO ACTION (CTA SECTION)
+     ========================================================================== -->
+<section class="home-final-cta-section" aria-labelledby="final-cta-title">
+    <div class="cta-container">
+        <div class="cta-card">
+            <div class="cta-copy">
+                <h2 id="final-cta-title">Good Food. A Better Tomorrow.</h2>
+                <p>Join thousands of satisfied households who rely on SalamMart for daily nutrition, farm produce, and
+                    kitchen essentials.</p>
+                <div class="cta-actions">
+                    <a href="#products" class="btn-hero-primary">
+                        <span>Start Shopping</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="cta-badges-wrap">
+                <div class="cta-pill">
+                    <i class="bi bi-check2-circle"></i>
+                    <span>Quality Products</span>
+                </div>
+                <div class="cta-pill">
+                    <i class="bi bi-truck"></i>
+                    <span>Fast Delivery</span>
+                </div>
+                <div class="cta-pill">
+                    <i class="bi bi-emoji-smile"></i>
+                    <span>Happier Homes</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

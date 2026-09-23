@@ -1,0 +1,92 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block extra_css %}
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/edit_delivery_area.css' %}">
+
+{% endblock %}
+
+{% block page_title %}
+Edit Delivery Area
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <a href="{% url 'owner_delivery_area' %}">
+        ← Back to Delivery Areas
+    </a>
+
+    <h1>
+        Edit Delivery Area
+    </h1>
+
+</div>
+
+
+<form
+    method="POST">
+
+    {% csrf_token %}
+
+    <label>
+        Locality
+    </label>
+
+    <input
+        type="text"
+        name="locality"
+        value="{{ area.locality }}"
+        required>
+
+
+    <label>
+        Pincode
+    </label>
+
+    <input
+        type="text"
+        name="pincode"
+        value="{{ area.pincode }}"
+        maxlength="10"
+        required>
+
+
+    <label>
+        Delivery Charge
+    </label>
+
+    <input
+        type="number"
+        name="delivery_charge"
+        value="{{ area.delivery_charge }}"
+        min="0"
+        step="0.01"
+        required>
+
+
+    <label>
+
+        <input
+            type="checkbox"
+            name="is_available"
+            {% if area.is_available %}
+            checked
+            {% endif %}>
+
+        Available for delivery
+
+    </label>
+
+
+    <button type="submit">
+        Save Changes
+    </button>
+
+</form>
+
+{% endblock %}

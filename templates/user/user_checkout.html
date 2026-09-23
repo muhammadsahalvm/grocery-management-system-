@@ -1,0 +1,246 @@
+{% extends 'base/base_user.html' %}
+{% load static %}
+
+{% block title %}Secure Checkout | SalamMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Breadcrumbs -->
+    <nav class="nav-back-group" aria-label="Breadcrumbs">
+        <a href="{% url 'user_cart' %}" class="btn-back-nav">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Cart</span>
+        </a>
+        <a href="{% url 'user_home' %}" class="btn-back-nav">
+            <i class="bi bi-shop"></i>
+            <span>Continue Shopping</span>
+        </a>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header-row">
+        <div>
+            <h1 class="page-title">Order Checkout</h1>
+            <p class="page-subtitle">Provide your delivery address, select scheduling, and choose payment method.</p>
+        </div>
+        <div class="checkout-secure-badge">
+            <i class="bi bi-shield-check"></i>
+            <span>Secure 256-bit Encryption</span>
+        </div>
+    </div>
+
+    <!-- Main Checkout Form & Layout -->
+    <form method="POST" action="{% url 'checkout' %}" class="checkout-layout-grid">
+        {% csrf_token %}
+
+        <!-- Left: Form Steps Column -->
+        <div class="checkout-steps-column">
+            <!-- Step 1: Delivery Address -->
+            <div class="checkout-step-card">
+                <div class="step-header">
+                    <span class="step-number">1</span>
+                    <div>
+                        <h2 class="step-title">Delivery Address</h2>
+                        <small class="step-desc">Where should we deliver your fresh groceries?</small>
+                    </div>
+                </div>
+
+                <div class="step-body">
+                    <div class="form-group-field">
+                        <label for="street" class="field-label">Street Address / Apartment / Flat No. <span class="req">*</span></label>
+                        <input 
+                            type="text" 
+                            id="street" 
+                            name="street" 
+                            class="field-input" 
+                            placeholder="e.g. Flat 402, Green Valley Apartments, 1st Cross" 
+                            required>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group-field">
+                            <label for="city" class="field-label">City / Town <span class="req">*</span></label>
+                            <input 
+                                type="text" 
+                                id="city" 
+                                name="city" 
+                                class="field-input" 
+                                placeholder="City" 
+                                required>
+                        </div>
+                        <div class="form-group-field">
+                            <label for="pincode" class="field-label">Pincode <span class="req">*</span></label>
+                            <input 
+                                type="text" 
+                                id="pincode" 
+                                name="pincode" 
+                                class="field-input" 
+                                placeholder="6-digit Pincode" 
+                                pattern="[0-9]{6}"
+                                maxlength="6"
+                                required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Delivery Preference -->
+            <div class="checkout-step-card">
+                <div class="step-header">
+                    <span class="step-number">2</span>
+                    <div>
+                        <h2 class="step-title">Delivery Schedule</h2>
+                        <small class="step-desc">Select when you would like to receive your delivery</small>
+                    </div>
+                </div>
+
+                <div class="step-body">
+                    <div class="schedule-options-grid">
+                        <label class="schedule-option-card">
+                            <input 
+                                type="radio" 
+                                name="delivery_type" 
+                                value="asap" 
+                                checked 
+                                onclick="document.getElementById('scheduled-options-box').style.display='none'">
+                            <div class="option-content">
+                                <div class="option-title-row">
+                                    <i class="bi bi-lightning-charge-fill"></i>
+                                    <strong>Express Delivery (ASAP)</strong>
+                                </div>
+                                <span class="option-note">Delivered directly to your door in 30-60 minutes</span>
+                            </div>
+                        </label>
+
+                        <label class="schedule-option-card">
+                            <input 
+                                type="radio" 
+                                name="delivery_type" 
+                                value="scheduled" 
+                                onclick="document.getElementById('scheduled-options-box').style.display='block'">
+                            <div class="option-content">
+                                <div class="option-title-row">
+                                    <i class="bi bi-calendar-check"></i>
+                                    <strong>Schedule for Later</strong>
+                                </div>
+                                <span class="option-note">Choose a convenient date and preferred time slot</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Scheduled Slot Picker -->
+                    <div id="scheduled-options-box" class="scheduled-slot-picker" style="display: none;">
+                        <div class="form-grid-2">
+                            <div class="form-group-field">
+                                <label for="scheduled_date" class="field-label">Delivery Date</label>
+                                <input type="date" id="scheduled_date" name="scheduled_date" class="field-input">
+                            </div>
+                            <div class="form-group-field">
+                                <label for="scheduled_slot" class="field-label">Time Window</label>
+                                <select id="scheduled_slot" name="scheduled_slot" class="field-select">
+                                    <option value="">Select a preferred time slot</option>
+                                    <option value="Morning (8 AM - 11 AM)">Morning (8 AM - 11 AM)</option>
+                                    <option value="Afternoon (12 PM - 3 PM)">Afternoon (12 PM - 3 PM)</option>
+                                    <option value="Evening (4 PM - 7 PM)">Evening (4 PM - 7 PM)</option>
+                                    <option value="Night (7 PM - 10 PM)">Night (7 PM - 10 PM)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Payment Method -->
+            <div class="checkout-step-card">
+                <div class="step-header">
+                    <span class="step-number">3</span>
+                    <div>
+                        <h2 class="step-title">Payment Method</h2>
+                        <small class="step-desc">All payment options are safe and verified</small>
+                    </div>
+                </div>
+
+                <div class="step-body">
+                    <div class="payment-options-grid">
+                        <label class="payment-option-card">
+                            <input type="radio" name="payment_method" value="cod" checked>
+                            <div class="option-content">
+                                <div class="option-title-row">
+                                    <i class="bi bi-cash-stack"></i>
+                                    <strong>Cash / UPI on Delivery</strong>
+                                </div>
+                                <span class="option-note">Pay via cash or scan UPI QR code upon doorstep arrival</span>
+                            </div>
+                        </label>
+
+                        <label class="payment-option-card">
+                            <input type="radio" name="payment_method" value="card">
+                            <div class="option-content">
+                                <div class="option-title-row">
+                                    <i class="bi bi-credit-card-2-front"></i>
+                                    <strong>Online Payment (Card / Net Banking)</strong>
+                                </div>
+                                <span class="option-note">Instant secure digital checkout with instant confirmation</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Order Review & Summary Column -->
+        <div class="checkout-summary-column">
+            <div class="order-summary-card sticky-card">
+                <h2 class="summary-title">Order Summary</h2>
+
+                <!-- Items Preview Scrollable -->
+                <div class="checkout-items-preview">
+                    {% for item in cart_items %}
+                        <div class="checkout-item-row">
+                            <span class="item-qty-badge">{{ item.quantity }}x</span>
+                            <div class="item-name-wrap">
+                                <span class="item-name">{{ item.product.product_name }}</span>
+                                <small class="item-unit">{{ item.product.section.section_name }}</small>
+                            </div>
+                            <strong class="item-price">₹{{ item.item_total }}</strong>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-line-row">
+                    <span>Items Subtotal</span>
+                    <strong>₹{{ subtotal }}</strong>
+                </div>
+                <div class="summary-line-row">
+                    <span>Delivery Fee</span>
+                    <strong>{% if delivery_charges %}₹{{ delivery_charges }}{% else %}Free{% endif %}</strong>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-total-row">
+                    <span>Grand Total</span>
+                    <strong class="total-amount">₹{{ grand_total|default:subtotal }}</strong>
+                </div>
+
+                <!-- Primary CTA: Place Order -->
+                <button type="submit" class="btn-checkout-primary" id="btn-place-order">
+                    <span>Place Order</span>
+                    <i class="bi bi-bag-check-fill"></i>
+                </button>
+
+                <div class="checkout-reassurance">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <span>By placing your order, you agree to SalamMart's <a href="{% url 'user_info' %}#terms">Terms</a> and <a href="{% url 'user_info' %}#privacy">Privacy Policy</a>.</span>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

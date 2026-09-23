@@ -1,0 +1,405 @@
+{% extends 'base/base_user.html' %}
+{% load static %}
+
+{% block title %}{{ product.product_name }} | SalamMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user_home.css' %}">
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container product-detail-page">
+    <!-- Breadcrumb / Back Link -->
+    <nav class="nav-back-group" aria-label="Back navigation">
+        <a href="{% url 'user_home' %}" class="btn-back-nav">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Store</span>
+        </a>
+        <a href="{% url 'user_home' %}?category={{ product.category.id }}#products" class="btn-back-nav">
+            <i class="bi bi-tag"></i>
+            <span>{{ product.category.category_name }}</span>
+        </a>
+    </nav>
+
+    <!-- Main Product Showcase Grid -->
+    <section class="product-showcase-grid" aria-labelledby="product-main-title">
+        <!-- Left: Image Gallery Container -->
+        <div class="detail-gallery-col">
+            <div class="detail-image-box">
+                {% if product.offer_price and product.actual_price > product.offer_price %}
+                    <span class="detail-discount-tag">Special Offer</span>
+                {% endif %}
+                <a href="{% url 'add_to_wishlist' product.id %}" class="detail-wishlist-toggle" title="Save to Wishlist" aria-label="Add {{ product.product_name }} to wishlist">
+                    <i class="bi bi-heart"></i>
+                </a>
+                {% if product.product_image %}
+                    <img src="/media/{{ product.product_image }}" alt="{{ product.product_name }}" class="detail-main-img">
+                {% else %}
+                    <div class="detail-img-fallback">
+                        <i class="bi bi-basket2"></i>
+                        <span>No image preview available</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Guarantee Badges Strip -->
+            <div class="detail-guarantee-strip">
+                <div class="guarantee-pill">
+                    <i class="bi bi-patch-check"></i>
+                    <span>100% Quality Checked</span>
+                </div>
+                <div class="guarantee-pill">
+                    <i class="bi bi-truck"></i>
+                    <span>30-60 Mins Delivery</span>
+                </div>
+                <div class="guarantee-pill">
+                    <i class="bi bi-arrow-repeat"></i>
+                    <span>Easy Doorstep Return</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Info, Price & Actions -->
+        <div class="detail-info-col">
+            <div class="detail-meta-tags">
+                <span class="detail-category-badge">{{ product.category.category_name }}</span>
+                <span class="detail-section-badge">{{ product.section.section_name }}</span>
+            </div>
+
+            <h1 id="product-main-title" class="detail-product-title">{{ product.product_name }}</h1>
+
+            <!-- Ratings Summary -->
+            <div class="detail-rating-row">
+                <div class="star-rating-pill" aria-label="{% if average_rating %}Rated {{ average_rating|floatformat:1 }} out of 5{% else %}Not yet rated{% endif %}">
+                    <i class="bi bi-star-fill"></i>
+                    <strong>{% if average_rating %}{{ average_rating|floatformat:1 }}{% else %}New{% endif %}</strong>
+                    <span>/ 5.0</span>
+                </div>
+                <span class="rating-review-count">({{ feedbacks|length }} verified customer review{% if feedbacks|length != 1 %}s{% endif %})</span>
+            </div>
+
+            <!-- Price Row -->
+            <div class="detail-price-box">
+                {% if product.offer_price %}
+                    <strong class="detail-price-current">₹{{ product.offer_price }}</strong>
+                    <del class="detail-price-original">₹{{ product.actual_price }}</del>
+                    <span class="detail-savings-badge">
+                        Save ₹{{ product.actual_price|add:product.offer_price }}
+                    </span>
+                {% else %}
+                    <strong class="detail-price-current">₹{{ product.actual_price }}</strong>
+                {% endif %}
+            </div>
+
+            <!-- Stock Status -->
+            <div class="detail-stock-row">
+                {% if product.quantity == 0 %}
+                    <span class="stock-pill stock-out"><i class="bi bi-x-circle-fill"></i> Currently Out of Stock</span>
+                {% elif product.quantity <= 10 %}
+                    <span class="stock-pill stock-low"><i class="bi bi-exclamation-circle-fill"></i> Only {{ product.quantity }} left in stock - order soon!</span>
+                {% else %}
+                    <span class="stock-pill stock-in"><i class="bi bi-check-circle-fill"></i> Fresh in Stock & Ready for Dispatch</span>
+                {% endif %}
+            </div>
+
+            <!-- Short Description -->
+            <p class="detail-short-description">
+                {{ product.description|default:"Handpicked fresh from trusted regional farms and suppliers. Cleaned, sorted, and packed under rigorous hygiene standards." }}
+            </p>
+
+            <!-- Purchase Controls -->
+            {% if request.session.customer_id %}
+                {% if product.quantity > 0 %}
+                    <div class="detail-purchase-wrapper">
+                        <form method="POST" action="{% url 'add_to_cart' product.id %}" class="detail-cart-form">
+                            {% csrf_token %}
+                            <div class="quantity-stepper">
+                                <label for="quantity-selector" class="sr-only">Quantity</label>
+                                <input 
+                                    id="quantity-selector" 
+                                    type="number" 
+                                    name="quantity" 
+                                    value="1" 
+                                    min="1" 
+                                    max="{{ product.quantity }}" 
+                                    class="stepper-input">
+                            </div>
+                            <button type="submit" class="btn-detail-add-cart">
+                                <i class="bi bi-cart-plus-fill" aria-hidden="true"></i>
+                                <span>Add to Cart</span>
+                            </button>
+                        </form>
+                        <a href="{% url 'add_to_wishlist' product.id %}" class="btn-detail-wishlist" title="Add to Wishlist">
+                            <i class="bi bi-heart"></i>
+                            <span>Save to Wishlist</span>
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="detail-out-of-stock-box">
+                        <p>This product is currently out of stock. Please check back later or explore similar fresh products below.</p>
+                        <a href="{% url 'add_to_wishlist' product.id %}" class="btn-detail-wishlist">
+                            <i class="bi bi-heart"></i>
+                            <span>Add to Wishlist for Notification</span>
+                        </a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="detail-login-notice">
+                    <div class="notice-text">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span>Please sign in or register to add this fresh item to your cart.</span>
+                    </div>
+                    <div class="notice-actions">
+                        <a href="{% url 'user_login' %}" class="btn-auth-login">Sign In</a>
+                        <a href="{% url 'user_register' %}" class="btn-auth-register">Create Account</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Product Description Details -->
+    <section class="detail-section-card" aria-labelledby="desc-heading">
+        <h2 id="desc-heading" class="detail-card-title">Product Overview & Quality Promise</h2>
+        <div class="detail-desc-body">
+            <p>{{ product.description|default:"At SalamMart, we believe in bringing you food as nature intended: fresh, wholesome, and delivered with genuine care. Every item undergoes careful quality grading so you receive only prime produce that enriches your home cooked meals." }}</p>
+            <div class="product-key-highlights">
+                <div class="highlight-item">
+                    <i class="bi bi-check2"></i>
+                    <span>Category: <strong>{{ product.category.category_name }}</strong></span>
+                </div>
+                <div class="highlight-item">
+                    <i class="bi bi-check2"></i>
+                    <span>Store Aisle: <strong>{{ product.section.section_name }}</strong></span>
+                </div>
+                <div class="highlight-item">
+                    <i class="bi bi-check2"></i>
+                    <span>Packaging: <strong>Hygienically Packed</strong></span>
+                </div>
+                <div class="highlight-item">
+                    <i class="bi bi-check2"></i>
+                    <span>Delivery: <strong>Same Day Direct to Door</strong></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Products in Same Category (Reusing Unified Card) -->
+    {% if related_products %}
+    <section class="detail-section-card" aria-labelledby="related-products-title">
+        <div class="section-header">
+            <div>
+                <span class="section-tag">Similar Choices</span>
+                <h2 id="related-products-title" class="section-title">More in {{ product.category.category_name }}</h2>
+            </div>
+            <a href="{% url 'user_home' %}?category={{ product.category.id }}#products" class="section-header-link">
+                <span>View Category</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="store-product-grid">
+            {% for rp in related_products %}
+                <article class="store-product-card">
+                    <div class="card-top-bar">
+                        {% if rp.offer_price and rp.actual_price > rp.offer_price %}
+                            <span class="discount-badge">Offer</span>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+                        <a href="{% url 'add_to_wishlist' rp.id %}" class="card-wishlist-btn" title="Add to Wishlist" aria-label="Add {{ rp.product_name }} to wishlist">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                    </div>
+                    <a href="{% url 'user_product_detail' rp.id %}" class="product-card-image" aria-label="View {{ rp.product_name }}">
+                        {% if rp.product_image %}
+                            <img src="/media/{{ rp.product_image }}" alt="{{ rp.product_name }}" loading="lazy">
+                        {% else %}
+                            <div class="product-image-fallback"><i class="bi bi-basket2"></i></div>
+                        {% endif %}
+                    </a>
+                    <div class="product-card-body">
+                        <span class="product-card-category">{{ rp.category.category_name }}</span>
+                        <h3 class="product-card-title"><a href="{% url 'user_product_detail' rp.id %}">{{ rp.product_name }}</a></h3>
+                        <p class="product-card-unit">{{ rp.section.section_name }}</p>
+                        <div class="product-card-price-row">
+                            <div class="price-group">
+                                {% if rp.offer_price %}
+                                    <strong class="price-current">₹{{ rp.offer_price }}</strong>
+                                    <del class="price-original">₹{{ rp.actual_price }}</del>
+                                {% else %}
+                                    <strong class="price-current">₹{{ rp.actual_price }}</strong>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="product-card-action">
+                            {% if rp.quantity > 0 %}
+                                <form method="POST" action="{% url 'add_to_cart' rp.id %}" class="add-to-cart-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn-add-cart">
+                                        <i class="bi bi-cart-plus-fill"></i>
+                                        <span>Add to Cart</span>
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button type="button" class="btn-add-cart is-disabled" disabled><span>Unavailable</span></button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Best Selling / Popular Picks -->
+    {% if best_selling_products %}
+    <section class="detail-section-card" aria-labelledby="bestselling-title">
+        <div class="section-header">
+            <div>
+                <span class="section-tag">Customer Favorites</span>
+                <h2 id="bestselling-title" class="section-title">Popular Grocery Essentials</h2>
+            </div>
+            <a href="{% url 'user_home' %}#products" class="section-header-link">
+                <span>Browse Store</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="store-product-grid">
+            {% for bp in best_selling_products %}
+                <article class="store-product-card">
+                    <div class="card-top-bar">
+                        {% if bp.offer_price and bp.actual_price > bp.offer_price %}
+                            <span class="discount-badge">Popular</span>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+                        <a href="{% url 'add_to_wishlist' bp.id %}" class="card-wishlist-btn" title="Add to Wishlist" aria-label="Add {{ bp.product_name }} to wishlist">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                    </div>
+                    <a href="{% url 'user_product_detail' bp.id %}" class="product-card-image" aria-label="View {{ bp.product_name }}">
+                        {% if bp.product_image %}
+                            <img src="/media/{{ bp.product_image }}" alt="{{ bp.product_name }}" loading="lazy">
+                        {% else %}
+                            <div class="product-image-fallback"><i class="bi bi-basket2"></i></div>
+                        {% endif %}
+                    </a>
+                    <div class="product-card-body">
+                        <span class="product-card-category">{{ bp.category.category_name }}</span>
+                        <h3 class="product-card-title"><a href="{% url 'user_product_detail' bp.id %}">{{ bp.product_name }}</a></h3>
+                        <p class="product-card-unit">{{ bp.section.section_name }}</p>
+                        <div class="product-card-price-row">
+                            <div class="price-group">
+                                {% if bp.offer_price %}
+                                    <strong class="price-current">₹{{ bp.offer_price }}</strong>
+                                    <del class="price-original">₹{{ bp.actual_price }}</del>
+                                {% else %}
+                                    <strong class="price-current">₹{{ bp.actual_price }}</strong>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="product-card-action">
+                            {% if bp.quantity > 0 %}
+                                <form method="POST" action="{% url 'add_to_cart' bp.id %}" class="add-to-cart-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn-add-cart">
+                                        <i class="bi bi-cart-plus-fill"></i>
+                                        <span>Add to Cart</span>
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button type="button" class="btn-add-cart is-disabled" disabled><span>Unavailable</span></button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Customer Reviews Section -->
+    <section class="detail-section-card" id="reviews" aria-labelledby="reviews-heading">
+        <div class="section-header">
+            <div>
+                <span class="section-tag">Verified Feedback</span>
+                <h2 id="reviews-heading" class="section-title">Customer Reviews & Ratings</h2>
+            </div>
+            {% if average_rating %}
+                <div class="review-score-badge">
+                    <strong>{{ average_rating|floatformat:1 }}</strong>
+                    <div class="score-stars">
+                        <i class="bi bi-star-fill"></i>
+                        <span>Overall Rating</span>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Add Review Panel -->
+        {% if can_review and not has_reviewed %}
+            <div class="review-submit-panel">
+                <h3>Share Your Experience with this Item</h3>
+                <form method="POST" action="{% url 'add_feedback' product.id %}" class="review-form">
+                    {% csrf_token %}
+                    <div class="form-row-rating">
+                        <label for="review-rating-select">Your Rating:</label>
+                        <select id="review-rating-select" name="rating" class="review-select" required>
+                            <option value="5">★★★★★ (5 - Excellent)</option>
+                            <option value="4">★★★★☆ (4 - Very Good)</option>
+                            <option value="3">★★★☆☆ (3 - Good)</option>
+                            <option value="2">★★☆☆☆ (2 - Fair)</option>
+                            <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                        </select>
+                    </div>
+                    <div class="form-row-text">
+                        <label for="review-feedback-text">Your Comments:</label>
+                        <textarea id="review-feedback-text" name="feedback" rows="3" class="review-textarea" placeholder="Describe the freshness, taste, packing, and overall satisfaction..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-hero-primary" style="align-self: flex-start; padding: 0.65rem 1.5rem;">
+                        <span>Submit Review</span>
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+
+        <!-- Reviews List -->
+        <div class="reviews-feed">
+            {% for review in feedbacks %}
+                <article class="customer-review-card">
+                    <div class="review-header">
+                        <div class="reviewer-meta">
+                            <span class="reviewer-avatar">{{ review.customer.name|first|upper }}</span>
+                            <div>
+                                <strong>{{ review.customer.name }}</strong>
+                                <small>{{ review.created_at|date:"M d, Y" }}</small>
+                            </div>
+                        </div>
+                        <div class="review-stars-pill">
+                            <i class="bi bi-star-fill"></i>
+                            <span>{{ review.rating }}/5</span>
+                        </div>
+                    </div>
+                    <p class="review-text">{{ review.feedback }}</p>
+                    {% if request.session.customer_id == review.customer.id %}
+                        <div class="review-actions-row">
+                            <a href="{% url 'edit_feedback' review.id %}" class="review-edit-link"><i class="bi bi-pencil"></i> Edit</a>
+                            <a href="{% url 'delete_feedback' review.id %}" class="review-delete-link" onclick="return confirm('Delete this review?');"><i class="bi bi-trash"></i> Delete</a>
+                        </div>
+                    {% endif %}
+                </article>
+            {% empty %}
+                <div class="empty-reviews-state">
+                    <i class="bi bi-chat-heart"></i>
+                    <p>No customer reviews yet for this product. Be the first to order and review!</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

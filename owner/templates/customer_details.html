@@ -1,0 +1,191 @@
+{% extends "base_dashboard.html" %}
+
+{% block page_title %}
+Customer Details
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <a href="{% url 'owner_customer' %}">
+        ← Back to Customers
+    </a>
+
+</div>
+
+
+<div>
+
+    <h1>
+        {{ customer.name }}
+    </h1>
+
+    <p>
+        Customer Details
+    </p>
+
+</div>
+
+
+<!-- Customer Information -->
+
+<div>
+
+    <h3>
+        Customer Information
+    </h3>
+
+    <p>
+        <strong>Name:</strong>
+        {{ customer.name }}
+    </p>
+
+    <p>
+        <strong>Username:</strong>
+        {{ customer.username }}
+    </p>
+
+    <p>
+        <strong>Email:</strong>
+        {{ customer.email }}
+    </p>
+
+    <p>
+        <strong>Phone:</strong>
+        {{ customer.phone }}
+    </p>
+
+    <p>
+        <strong>Gender:</strong>
+        {{ customer.gender|default:"Not provided" }}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+
+        {% if customer.is_active %}
+            Active
+        {% else %}
+            Inactive
+        {% endif %}
+
+    </p>
+
+    <p>
+        <strong>Joined:</strong>
+        {{ customer.created_at|date:"d M Y, h:i A" }}
+    </p>
+
+</div>
+
+
+<!-- Statistics -->
+
+<div>
+
+    <div>
+
+        <span>
+            Total Orders
+        </span>
+
+        <strong>
+            {{ total_orders }}
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Total Spending
+        </span>
+
+        <strong>
+            ₹{{ total_spending }}
+        </strong>
+
+    </div>
+
+</div>
+
+
+<!-- Order History -->
+
+<div>
+
+    <h3>
+        Order History
+    </h3>
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Order</th>
+
+                <th>Total</th>
+
+                <th>Payment</th>
+
+                <th>Status</th>
+
+                <th>Date</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+        {% for o in orders %}
+
+            <tr>
+
+                <td>
+                    {{ o.order_number }}
+                </td>
+
+                <td>
+                    ₹{{ o.total_amount }}
+                </td>
+
+                <td>
+                    {{ o.payment_method }}
+                </td>
+
+                <td>
+                    {{ o.get_status_display }}
+                </td>
+
+                <td>
+                    {{ o.created_at|date:"d M Y, h:i A" }}
+                </td>
+
+            </tr>
+
+        {% empty %}
+
+            <tr>
+
+                <td colspan="5">
+                    No orders found for this customer.
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

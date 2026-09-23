@@ -1,0 +1,223 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salam Mart | Owner Login</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body>
+
+<div class="background-overlay"></div>
+
+<div class="auth-container">
+
+    <!-- ================= LEFT SIDE ================= -->
+
+    <div class="left-section">
+
+        <div class="logo-box">
+            <img src="{% static 'images/salammartlogo.png' %}" alt="Salam Mart Logo">
+        </div>
+
+        <h1>
+            Welcome Back
+        </h1>
+
+        <p class="subtitle">
+            Login to manage products, inventory, customers and deliveries.
+        </p>
+
+        {% if error %}
+        <div class="error-box">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'owner_login' %}" id="loginForm">
+
+            {% csrf_token %}
+
+            <!-- Username -->
+
+            <div class="input-group">
+
+                <label>
+                    Username
+                </label>
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        placeholder="Enter Username"
+                        required>
+
+                </div>
+
+            </div>
+
+            <!-- Password -->
+
+            <div class="input-group">
+
+                <label>
+                    Password
+                </label>
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Enter Password"
+                        required>
+
+                    <span class="togglePassword">
+                        <i class="fa-solid fa-eye"></i>
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="login-options">
+
+                <label class="remember-me">
+
+                    <input type="checkbox">
+
+                    Remember Me
+
+                </label>
+
+                <a href="#">
+                    Forgot Password?
+                </a>
+
+            </div>
+
+            <button type="submit" class="login-btn">
+
+                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+
+                Login
+
+            </button>
+
+        </form>
+
+        <div class="divider">
+
+            <span></span>
+
+            <p>Salam Mart</p>
+
+            <span></span>
+
+        </div>
+
+        <div class="register-link">
+
+            Don't have an account?
+
+            <a href="{% url 'owner_registration' %}">
+                Create Account
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ================= RIGHT SIDE ================= -->
+
+    <div class="right-section">
+
+        <div class="image-container">
+
+            <img
+                src="{% static 'images/grocery.png' %}"
+                alt="Grocery Illustration">
+
+        </div>
+
+        <div class="floating-card top-card">
+
+            <i class="fa-solid fa-basket-shopping"></i>
+
+            <div>
+
+                <h3>
+                    Fresh Inventory
+                </h3>
+
+                <p>
+                    Manage products effortlessly
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="floating-card bottom-card">
+
+            <i class="fa-solid fa-truck-fast"></i>
+
+            <div>
+
+                <h3>
+                    Fast Delivery
+                </h3>
+
+                <p>
+                    Serve every customer on time
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="stats-card">
+
+            <h2>
+                2500+
+            </h2>
+
+            <p>
+                Happy Customers
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{% static 'js/login.js' %}"></script>
+
+</body>
+
+</html>

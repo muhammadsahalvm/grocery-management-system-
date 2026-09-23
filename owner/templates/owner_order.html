@@ -1,0 +1,321 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+
+{% block extra_css %}
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/owner_order.css' %}">
+
+{% endblock %}
+
+{% block page_title %}
+Orders
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <a href="{% url 'owner_dashboard' %}">
+        ← Back to Dashboard
+    </a>
+
+    <h1>
+        Order Management
+    </h1>
+
+    <p>
+        View and manage customer orders.
+    </p>
+
+</div>
+
+
+<!-- Statistics -->
+
+<div>
+
+    <div>
+
+        <span>
+            Total Orders
+        </span>
+
+        <strong>
+            {{ total_orders }}
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Pending
+        </span>
+
+        <strong>
+            {{ pending_orders }}
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Delivered
+        </span>
+
+        <strong>
+            {{ delivered_orders }}
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span>
+            Cancelled
+        </span>
+
+        <strong>
+            {{ cancelled_orders }}
+        </strong>
+
+    </div>
+
+</div>
+
+
+<!-- Search / Filters -->
+
+<form method="GET">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search order or customer..."
+        value="{{ search }}">
+
+
+    <select name="status">
+
+        <option value="">
+            All Order Status
+        </option>
+
+        {% for value, label in status_choices %}
+
+        <option
+            value="{{ value }}"
+            {% if selected_status == value %}
+            selected
+            {% endif %}>
+
+            {{ label }}
+
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+
+    <select name="payment_status">
+
+        <option value="">
+            All Payment Status
+        </option>
+
+        {% for value, label in payment_status_choices %}
+
+        <option
+            value="{{ value }}"
+            {% if selected_payment_status == value %}
+            selected
+            {% endif %}>
+
+            {{ label }}
+
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>
+
+
+<!-- Orders -->
+
+<table>
+
+    <thead>
+
+        <tr>
+
+            <th>#</th>
+
+            <th>Order</th>
+
+            <th>Customer</th>
+
+            <th>Items</th>
+
+            <th>Total</th>
+
+            <th>Payment</th>
+
+            <th>Delivery</th>
+
+            <th>Status</th>
+
+            <th>Date</th>
+
+            <th>Action</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+    {% for o in orders %}
+
+        <tr>
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+            <td>
+                {{ o.order_number }}
+            </td>
+
+            <td>
+
+                {{ o.customer.name }}
+
+                <br>
+
+                {{ o.customer.phone }}
+
+            </td>
+
+            <td>
+
+                {{ o.items.count }}
+
+            </td>
+
+            <td>
+
+                ₹{{ o.total_amount }}
+
+            </td>
+
+            <td>
+
+                {{ o.get_payment_method_display }}
+
+                <br>
+
+                {{ o.get_payment_status_display }}
+
+            </td>
+
+            <td>
+
+                {% if o.delivery_type == "scheduled" %}
+
+                <strong>
+                    Scheduled
+                </strong>
+
+                <br>
+
+                {% if o.scheduled_date %}
+                    {{ o.scheduled_date|date:"d M Y" }}
+                {% endif %}
+
+                <br>
+
+                {% if o.scheduled_slot %}
+                    {{ o.scheduled_slot }}
+                {% endif %}
+
+            {% else %}
+
+                <strong>
+                    ASAP
+                </strong>
+
+            {% endif %}
+
+            {% if o.delivery_area %}
+
+                <br>
+
+                {{ o.delivery_area.locality }}
+
+                <br>
+
+                {{ o.delivery_area.pincode }}
+
+            {% endif %}
+
+            </td>
+
+            <td>
+
+                {{ o.get_status_display }}
+
+            </td>
+
+            <td>
+
+                {{ o.created_at|date:"d M Y, h:i A" }}
+
+            </td>
+
+            <td>
+
+                <a
+                    href="{% url 'order_details' o.id %}">
+
+                    View Details
+
+                </a>
+
+            </td>
+
+        </tr>
+
+    {% empty %}
+
+        <tr>
+
+            <td colspan="10">
+
+                No Orders Found
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

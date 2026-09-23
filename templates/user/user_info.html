@@ -1,0 +1,159 @@
+{% extends 'base/base_user.html' %}
+{% load static %}
+
+{% block title %}About & Information | SalamMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Editorial Hero Header -->
+<div class="info-hero-header">
+    <div class="info-hero-inner">
+        <span class="section-tag" style="color: #c8eed4;">About SalamMart</span>
+        <h1 class="info-hero-title">Fresh Groceries. Real Food. A Healthier You.</h1>
+        <p class="info-hero-subtitle">Learn about our mission to bring farm-fresh produce and honest everyday essentials to your doorstep.</p>
+    </div>
+</div>
+
+<div class="page-container" style="max-width: 1040px; padding-bottom: 5rem;">
+    <!-- Internal Quick Nav Strip -->
+    <div class="info-quick-nav" aria-label="Page navigation">
+        <a href="#about" class="info-nav-link"><i class="bi bi-heart-fill"></i> Our Story</a>
+        <a href="#faq" class="info-nav-link"><i class="bi bi-question-circle"></i> FAQ</a>
+        <a href="#contact" class="info-nav-link"><i class="bi bi-envelope"></i> Contact Us</a>
+        <a href="#privacy" class="info-nav-link"><i class="bi bi-shield-check"></i> Privacy Policy</a>
+        <a href="#terms" class="info-nav-link"><i class="bi bi-file-text"></i> Terms of Service</a>
+    </div>
+
+    <!-- Section 1: Our Story & Journey -->
+    <section id="about" class="info-content-section">
+        <div class="detail-section-card">
+            <div class="story-split-grid">
+                <div>
+                    <span class="section-tag">Rooted in Care</span>
+                    <h2 class="detail-card-title" style="font-size: 1.85rem; margin: 0.35rem 0 1rem;">It started with a simple vision.</h2>
+                    <p class="story-text">
+                        Why should farm-fresh, nutritious food be hard to get? SalamMart was created to connect households directly with regional growers, local dairies, and trusted harvest partners.
+                    </p>
+                    <p class="story-text">
+                        We eliminate long warehouse holding times so your leafy greens, crisp apples, and fresh bread arrive with peak flavor and vital nutrients intact. Every basket we pack is hand-sorted with the same attention you'd give your own family.
+                    </p>
+                </div>
+                <div class="story-art-box">
+                    <img src="{% static 'images/login/grocery-illustration.png' %}" alt="SalamMart grocery bag" class="story-art-img">
+                </div>
+            </div>
+
+            <!-- Core Pillars -->
+            <div class="info-pillars-grid">
+                <div class="pillar-card">
+                    <div class="pillar-icon"><i class="bi bi-flower1"></i></div>
+                    <h3>Locally Sourced</h3>
+                    <p>We work with trusted regional farmers to deliver crisp harvest directly to your kitchen.</p>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-icon"><i class="bi bi-stopwatch"></i></div>
+                    <h3>Fast Fulfillment</h3>
+                    <p>Doorstep delivery within 30-60 minutes or convenient scheduled time slots.</p>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-icon"><i class="bi bi-patch-check"></i></div>
+                    <h3>Zero Compromise</h3>
+                    <p>100% satisfaction guarantee with instant, hassle-free doorstep replacement.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Frequently Asked Questions -->
+    <section id="faq" class="info-content-section">
+        <div class="detail-section-card">
+            <span class="section-tag">Got Questions?</span>
+            <h2 class="detail-card-title">Frequently Asked Questions</h2>
+            <div class="faq-accordion-list">
+                <details class="faq-accordion-item" open>
+                    <summary class="faq-question">What are SalamMart's standard delivery hours?</summary>
+                    <div class="faq-answer">
+                        <p>We fulfill deliveries from 7:00 AM to 10:00 PM every day of the week, including weekends and public holidays.</p>
+                    </div>
+                </details>
+
+                <details class="faq-accordion-item">
+                    <summary class="faq-question">How does free delivery work?</summary>
+                    <div class="faq-answer">
+                        <p>All grocery orders totaling <strong>₹499 or more</strong> automatically qualify for free doorstep delivery. For orders below ₹499, a nominal delivery fee applies depending on your zone.</p>
+                    </div>
+                </details>
+
+                <details class="faq-accordion-item">
+                    <summary class="faq-question">What is your quality guarantee and return policy?</summary>
+                    <div class="faq-answer">
+                        <p>If any fruit, vegetable, or grocery product does not meet your expectations upon delivery, simply let our delivery partner know or reach out within 24 hours for a prompt refund or replacement.</p>
+                    </div>
+                </details>
+
+                <details class="faq-accordion-item">
+                    <summary class="faq-question">Which payment methods do you accept?</summary>
+                    <div class="faq-answer">
+                        <p>We support Cash on Delivery (COD), UPI on Delivery, and secure online digital checkout through Debit / Credit Cards and Net Banking.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Contact Us -->
+    <section id="contact" class="info-content-section">
+        <div class="detail-section-card">
+            <span class="section-tag">Get In Touch</span>
+            <h2 class="detail-card-title">Customer Support & Assistance</h2>
+            <div class="contact-cards-grid">
+                <div class="contact-info-box">
+                    <i class="bi bi-telephone-fill"></i>
+                    <strong>Phone Support</strong>
+                    <p>1800-123-4567</p>
+                    <small>Mon - Sun, 8:00 AM - 9:00 PM</small>
+                </div>
+                <div class="contact-info-box">
+                    <i class="bi bi-envelope-fill"></i>
+                    <strong>Email Inquiries</strong>
+                    <p>support@salammart.com</p>
+                    <small>We respond within 2 hours</small>
+                </div>
+                <div class="contact-info-box">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <strong>Central Distribution</strong>
+                    <p>Bengaluru, Karnataka, India</p>
+                    <small>Hub Pincode: 560001</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Privacy Policy -->
+    <section id="privacy" class="info-content-section">
+        <div class="detail-section-card">
+            <span class="section-tag">Data Security</span>
+            <h2 class="detail-card-title">Privacy Policy</h2>
+            <div class="policy-body-text">
+                <p>SalamMart is committed to safeguarding your privacy. We collect personal data such as your name, delivery address, phone number, and email strictly to fulfill orders, provide delivery notifications, and ensure smooth customer service.</p>
+                <p>We do not sell, rent, or lease your private information to third-party marketing companies. All checkout transactions are secured with standard encryption.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Terms & Conditions -->
+    <section id="terms" class="info-content-section">
+        <div class="detail-section-card">
+            <span class="section-tag">Terms of Service</span>
+            <h2 class="detail-card-title">Terms & Conditions</h2>
+            <div class="policy-body-text">
+                <p>By using the SalamMart website and ordering products, you agree to our standard terms of service. Products are subject to local harvest availability. Prices shown are in Indian Rupees (INR) and inclusive of all applicable local taxes.</p>
+                <p>SalamMart reserves the right to adjust delivery windows in the event of severe weather conditions or localized road closures, keeping customers updated via SMS.</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

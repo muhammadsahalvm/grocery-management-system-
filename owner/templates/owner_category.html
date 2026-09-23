@@ -1,0 +1,126 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/owner_category.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Page Header: title left, back button right -->
+<div class="page-header">
+
+    <div>
+        <h1>Category Management</h1>
+        <p>Add, edit and manage your store categories.</p>
+    </div>
+
+    <a href="{% url 'owner_dashboard' %}" class="add-btn cat-back-btn">← Back to Dashboard</a>
+
+</div>
+
+
+{% if messages %}
+{% for message in messages %}
+<div class="message {{ message.tags }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+
+<!-- Add Category Card: label left, form right -->
+<div class="category-card">
+
+    <h2>Add New Category</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Category Name</label>
+            <input type="text" name="category_name" placeholder="Enter category name" required>
+        </div>
+
+        <div class="form-group">
+            <label>Category Image</label>
+            <input type="file" name="category_image" accept="image/*" required>
+        </div>
+
+        <button type="submit" class="add-btn">Add Category</button>
+
+    </form>
+
+</div>
+
+
+<!-- Table toolbar: title left, search + button right -->
+<div class="table-header cat-table-header">
+    <h2>Available Categories</h2>
+    <div class="cat-search-wrap">
+        <input type="text" id="searchInput" placeholder="Search Category...">
+        <button type="button" class="add-btn" id="searchBtn">Search</button>
+    </div>
+</div>
+
+<table id="categoryTable">
+
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>Category Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for cat in categories %}
+
+        <tr>
+            <td>{{ forloop.counter }}</td>
+
+            <td>
+                {% if cat.category_image %}
+                <img src="/media/{{ cat.category_image }}" class="category-image" alt="{{ cat.category_name }}">
+                {% else %}
+                <span style="color:#aaa;">No Image</span>
+                {% endif %}
+            </td>
+
+            <td>{{ cat.category_name }}</td>
+
+            <td>
+                <button class="edit-btn"
+                    data-id="{{ cat.id }}"
+                    data-name="{{ cat.category_name }}"
+                    data-image="{{ cat.category_image }}"
+                    data-url="{% url 'edit_category' cat.id %}">
+                    Edit
+                </button>
+
+                <button class="delete-btn" data-url="{% url 'delete_category' cat.id %}">
+                    Delete
+                </button>
+            </td>
+        </tr>
+
+    {% empty %}
+
+        <tr>
+            <td colspan="4" style="text-align:center; color:#aaa; padding:30px;">
+                No Categories Found
+            </td>
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/owner_category.js' %}?v=2"></script>
+{% endblock %}

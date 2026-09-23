@@ -1,0 +1,228 @@
+{% extends 'base/base_user.html' %}
+{% load static %}
+
+{% block title %}My Shopping Cart | SalamMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Breadcrumb / Back Link -->
+    <nav class="nav-back-group" aria-label="Breadcrumb">
+        <a href="{% url 'user_home' %}" class="btn-back-nav">
+            <i class="bi bi-arrow-left"></i>
+            <span>Continue Shopping</span>
+        </a>
+        <a href="{% url 'user_profile' %}" class="btn-back-nav">
+            <i class="bi bi-person"></i>
+            <span>My Profile</span>
+        </a>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header-row">
+        <div>
+            <h1 class="page-title">My Shopping Cart</h1>
+            <p class="page-subtitle">Review your selected fresh items and proceed to secure checkout.</p>
+        </div>
+        <span class="count-pill">{{ cart_items|length }} Item{% if cart_items|length != 1 %}s{% endif %}</span>
+    </div>
+
+    {% if cart_items %}
+        <div class="cart-layout-grid">
+            <!-- Left: Cart Items List -->
+            <div class="cart-items-column">
+                <!-- Desktop Table View -->
+                <div class="cart-desktop-table-wrap">
+                    <table class="cart-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Unit Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                                <tr>
+                                    <td>
+                                        <div class="cart-product-cell">
+                                            <a href="{% url 'user_product_detail' item.product.id %}" class="cart-product-thumb">
+                                                {% if item.product.product_image %}
+                                                    <img src="/media/{{ item.product.product_image }}" alt="{{ item.product.product_name }}">
+                                                {% else %}
+                                                    <div class="thumb-fallback"><i class="bi bi-basket2"></i></div>
+                                                {% endif %}
+                                            </a>
+                                            <div class="cart-product-info">
+                                                <span class="cart-cat-tag">{{ item.product.category.category_name }}</span>
+                                                <a href="{% url 'user_product_detail' item.product.id %}" class="cart-item-name">
+                                                    {{ item.product.product_name }}
+                                                </a>
+                                                <small class="cart-item-stock">In Stock: {{ item.product.quantity }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cart-price-cell">
+                                            {% if item.product.offer_price %}
+                                                <strong class="price-val">₹{{ item.product.offer_price }}</strong>
+                                                <del class="price-del">₹{{ item.product.actual_price }}</del>
+                                            {% else %}
+                                                <strong class="price-val">₹{{ item.product.actual_price }}</strong>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{% url 'update_cart' item.id %}" class="cart-qty-form">
+                                            {% csrf_token %}
+                                            <input 
+                                                type="number" 
+                                                name="quantity" 
+                                                value="{{ item.quantity }}" 
+                                                min="1" 
+                                                max="{{ item.product.quantity }}" 
+                                                class="cart-qty-input"
+                                                aria-label="Quantity for {{ item.product.product_name }}">
+                                            <button type="submit" class="btn-qty-update" title="Update Quantity">
+                                                <i class="bi bi-arrow-repeat"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <strong class="cart-line-total">₹{{ item.item_total }}</strong>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{% url 'remove_from_cart' item.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-cart-remove" title="Remove {{ item.product.product_name }} from cart" aria-label="Remove {{ item.product.product_name }}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile Stacked Cards View (No Horizontal Scroll) -->
+                <div class="cart-mobile-cards-list">
+                    {% for item in cart_items %}
+                        <article class="cart-mobile-card">
+                            <div class="mobile-card-top">
+                                <a href="{% url 'user_product_detail' item.product.id %}" class="mobile-card-thumb">
+                                    {% if item.product.product_image %}
+                                        <img src="/media/{{ item.product.product_image }}" alt="{{ item.product.product_name }}">
+                                    {% else %}
+                                        <div class="thumb-fallback"><i class="bi bi-basket2"></i></div>
+                                    {% endif %}
+                                </a>
+                                <div class="mobile-card-details">
+                                    <span class="cart-cat-tag">{{ item.product.category.category_name }}</span>
+                                    <a href="{% url 'user_product_detail' item.product.id %}" class="cart-item-name">
+                                        {{ item.product.product_name }}
+                                    </a>
+                                    <div class="mobile-card-prices">
+                                        {% if item.product.offer_price %}
+                                            <strong>₹{{ item.product.offer_price }}</strong>
+                                            <del>₹{{ item.product.actual_price }}</del>
+                                        {% else %}
+                                            <strong>₹{{ item.product.actual_price }}</strong>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <form method="POST" action="{% url 'remove_from_cart' item.id %}" class="mobile-remove-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-cart-remove" aria-label="Remove item">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="mobile-card-bottom">
+                                <form method="POST" action="{% url 'update_cart' item.id %}" class="cart-qty-form">
+                                    {% csrf_token %}
+                                    <span class="mobile-qty-label">Qty:</span>
+                                    <input 
+                                        type="number" 
+                                        name="quantity" 
+                                        value="{{ item.quantity }}" 
+                                        min="1" 
+                                        max="{{ item.product.quantity }}" 
+                                        class="cart-qty-input"
+                                        aria-label="Quantity for {{ item.product.product_name }}">
+                                    <button type="submit" class="btn-qty-update">
+                                        <span>Update</span>
+                                    </button>
+                                </form>
+                                <div class="mobile-line-total">
+                                    <small>Item Total</small>
+                                    <strong>₹{{ item.item_total }}</strong>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Right: Order Summary Card -->
+            <div class="cart-summary-column">
+                <div class="order-summary-card">
+                    <h2 class="summary-title">Order Summary</h2>
+
+                    <div class="summary-line-row">
+                        <span>Items Subtotal</span>
+                        <strong>₹{{ subtotal }}</strong>
+                    </div>
+                    <div class="summary-line-row">
+                        <span>Estimated Delivery</span>
+                        <span class="free-text">Calculated at checkout</span>
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-total-row">
+                        <span>Cart Total</span>
+                        <strong class="total-amount">₹{{ subtotal }}</strong>
+                    </div>
+
+                    <a href="{% url 'checkout' %}" class="btn-checkout-primary">
+                        <span>Proceed to Checkout</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                    <!-- Trust Strip in Summary -->
+                    <div class="summary-trust-strip">
+                        <div class="trust-mini-item">
+                            <i class="bi bi-shield-check"></i>
+                            <span>100% Safe & Secure Checkout</span>
+                        </div>
+                        <div class="trust-mini-item">
+                            <i class="bi bi-truck"></i>
+                            <span>Fast Doorstep Delivery</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Empty Cart State -->
+        <div class="empty-state-box">
+            <div class="empty-state-icon">
+                <i class="bi bi-cart-x"></i>
+            </div>
+            <h2>Your Shopping Cart is Empty</h2>
+            <p>Looks like you haven't added any fresh groceries yet. Explore our farm produce and daily essentials.</p>
+            <a href="{% url 'user_home' %}" class="btn-hero-primary" style="display: inline-flex;">
+                <span>Start Shopping</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

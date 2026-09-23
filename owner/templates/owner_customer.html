@@ -1,0 +1,238 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+
+{% block extra_css %}
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/owner_customer.css' %}">
+
+{% endblock %}
+
+{% block page_title %}
+Customers
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+     <a href="{% url 'owner_dashboard' %}">
+        ← Back to Dashboard
+    </a>
+
+    <h1>
+        Customer Management
+    </h1>
+
+    <p>
+        Manage registered customers and view their order activity.
+    </p>
+
+</div>
+
+
+<!-- Statistics -->
+
+<div>
+
+    <div>
+        <span>Total Customers</span>
+        <strong>{{ total_customers }}</strong>
+    </div>
+
+    <div>
+        <span>Active Customers</span>
+        <strong>{{ active_customers }}</strong>
+    </div>
+
+    <div>
+        <span>Inactive Customers</span>
+        <strong>{{ inactive_customers }}</strong>
+    </div>
+
+</div>
+
+
+<!-- Search -->
+
+<form method="GET">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search customer..."
+        value="{{ search }}">
+
+
+    <select name="status">
+
+        <option
+            value=""
+            {% if not selected_status %}
+            selected
+            {% endif %}>
+
+            All Customers
+
+        </option>
+
+        <option
+            value="active"
+            {% if selected_status == "active" %}
+            selected
+            {% endif %}>
+
+            Active
+
+        </option>
+
+        <option
+            value="inactive"
+            {% if selected_status == "inactive" %}
+            selected
+            {% endif %}>
+
+            Inactive
+
+        </option>
+
+    </select>
+
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>
+
+
+<!-- Customers -->
+
+<table>
+
+    <thead>
+
+        <tr>
+
+            <th>#</th>
+
+            <th>Name</th>
+
+            <th>Username</th>
+
+            <th>Email</th>
+
+            <th>Phone</th>
+
+            <th>Orders</th>
+
+            <th>Total Spending</th>
+
+            <th>Status</th>
+
+            <th>Action</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+    {% for c in customers %}
+
+        <tr>
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+            <td>
+                {{ c.name }}
+            </td>
+
+            <td>
+                {{ c.username }}
+            </td>
+
+            <td>
+                {{ c.email }}
+            </td>
+
+            <td>
+                {{ c.phone }}
+            </td>
+
+            <td>
+                {{ c.total_orders }}
+            </td>
+
+            <td>
+                ₹{{ c.total_spending|default:"0.00" }}
+            </td>
+
+            <td>
+
+                {% if c.is_active %}
+
+                    <span>
+                        Active
+                    </span>
+
+                {% else %}
+
+                    <span>
+                        Inactive
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+
+            <td>
+
+                <a
+                href="{% url 'customer_details' c.id %}">
+
+                View Details
+
+                </a>
+
+                <a
+                    href="{% url 'toggle_customer_status' c.id %}">
+
+                    {% if c.is_active %}
+
+                        Deactivate
+
+                    {% else %}
+
+                        Activate
+
+                    {% endif %}
+
+                </a>
+
+            </td>
+
+        </tr>
+
+    {% empty %}
+
+        <tr>
+
+            <td colspan="9">
+                No Customers Found
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

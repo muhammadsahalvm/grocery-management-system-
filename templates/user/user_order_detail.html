@@ -1,0 +1,172 @@
+{% extends 'base/base_user.html' %}
+{% load static %}
+
+{% block title %}Order #{{ order.order_number }} | SalamMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Breadcrumbs -->
+    <nav class="nav-back-group" aria-label="Breadcrumbs">
+        <a href="{% url 'user_orders' %}" class="btn-back-nav">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to All Orders</span>
+        </a>
+        <a href="{% url 'user_home' %}" class="btn-back-nav">
+            <i class="bi bi-shop"></i>
+            <span>Continue Shopping</span>
+        </a>
+    </nav>
+
+    <!-- Header with Status Badge -->
+    <div class="page-header-row">
+        <div>
+            <div class="order-headline-code">
+                <span class="order-tag">Order Details</span>
+                <h1 class="page-title">Order #{{ order.order_number }}</h1>
+            </div>
+            <p class="page-subtitle">Placed on {{ order.created_at|date:"F d, Y \a\t H:i" }}</p>
+        </div>
+        <div class="header-status-wrap">
+            <span class="status-badge status-{{ order.status|lower|cut:' ' }}" style="font-size: 0.95rem; padding: 0.5rem 1.15rem;">
+                {{ order.get_status_display }}
+            </span>
+        </div>
+    </div>
+
+    <div class="cart-layout-grid">
+        <!-- Left: Items List & Fulfillment Information -->
+        <div class="cart-items-column">
+            <!-- Items Section -->
+            <div class="detail-section-card">
+                <h2 class="detail-card-title">Ordered Items ({{ order.items.count }})</h2>
+                <div class="order-items-table-wrap">
+                    <table class="cart-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Unit Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                                <tr>
+                                    <td>
+                                        <div class="cart-product-cell">
+                                            <div class="cart-product-thumb">
+                                                {% if item.product.product_image %}
+                                                    <img src="/media/{{ item.product.product_image }}" alt="{{ item.product.product_name }}">
+                                                {% else %}
+                                                    <div class="thumb-fallback"><i class="bi bi-basket2"></i></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="cart-product-info">
+                                                <a href="{% url 'user_product_detail' item.product.id %}" class="cart-item-name">
+                                                    {{ item.product.product_name }}
+                                                </a>
+                                                <small class="cart-item-stock">{{ item.product.section.section_name }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><strong>₹{{ item.unit_price }}</strong></td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td><strong class="cart-line-total">₹{{ item.total_price }}</strong></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Fulfillment & Delivery Details -->
+            <div class="detail-section-card">
+                <h2 class="detail-card-title">Delivery & Dispatch Information</h2>
+                <div class="fulfillment-info-grid">
+                    <div class="info-tile">
+                        <div class="tile-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                        <div>
+                            <small>Delivery Address</small>
+                            <p>{{ order.address }}</p>
+                        </div>
+                    </div>
+                    <div class="info-tile">
+                        <div class="tile-icon"><i class="bi bi-clock-history"></i></div>
+                        <div>
+                            <small>Delivery Window</small>
+                            <p>
+                                {{ order.get_delivery_type_display }}
+                                {% if order.scheduled_date %}
+                                    <br><strong>{{ order.scheduled_date }}</strong> ({{ order.scheduled_slot }})
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cancellation Option if Allowed -->
+            {% if order.status == 'pending' or order.status == 'confirmed' %}
+                <div class="order-cancel-card">
+                    <div>
+                        <strong>Need to cancel this order?</strong>
+                        <p>Orders can be cancelled before processing begins.</p>
+                    </div>
+                    <form method="POST" action="{% url 'cancel_order' order.id %}" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-cancel-order">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Cancel Order</span>
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Right: Order Payment Summary -->
+        <div class="cart-summary-column">
+            <div class="order-summary-card sticky-card">
+                <h2 class="summary-title">Payment Summary</h2>
+
+                <div class="summary-line-row">
+                    <span>Items Subtotal</span>
+                    <strong>₹{{ product_subtotal }}</strong>
+                </div>
+                <div class="summary-line-row">
+                    <span>Delivery Charge</span>
+                    <strong>{% if order.delivery_charge %}₹{{ order.delivery_charge }}{% else %}Free{% endif %}</strong>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-total-row">
+                    <span>Grand Total</span>
+                    <strong class="total-amount">₹{{ order.total_amount }}</strong>
+                </div>
+
+                <!-- Payment Status Pill -->
+                <div class="order-payment-meta">
+                    <div class="payment-method-badge">
+                        <i class="bi bi-credit-card-2-front"></i>
+                        <span>Paid via: <strong>{{ order.payment_method|upper }}</strong></span>
+                    </div>
+                    <div class="payment-status-badge">
+                        <span>Status: <strong>{{ order.get_payment_status_display }}</strong></span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <a href="{% url 'user_home' %}" class="btn-hero-primary" style="display: flex; justify-content: center; width: 100%;">
+                        <span>Order More Groceries</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

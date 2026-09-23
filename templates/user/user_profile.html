@@ -1,0 +1,174 @@
+{% extends 'base/base_user.html' %}
+{% load static %}
+
+{% block title %}My Account & Profile | SalamMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="profile-layout-grid">
+        <!-- Sidebar Navigation -->
+        <aside class="profile-nav-sidebar">
+            <div class="sidebar-user-brief">
+                <div class="brief-avatar">
+                    {% if customer.image %}
+                        <img src="/media/{{ customer.image }}" alt="{{ customer.name }}">
+                    {% else %}
+                        <span>{{ customer.name|first|upper }}</span>
+                    {% endif %}
+                </div>
+                <div class="brief-info">
+                    <strong>{{ customer.name }}</strong>
+                    <small>{{ customer.phone }}</small>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu-list">
+                <a href="{% url 'user_profile' %}" class="sidebar-menu-item is-active">
+                    <i class="bi bi-person-gear"></i>
+                    <span>Profile Details</span>
+                </a>
+                <a href="{% url 'user_orders' %}" class="sidebar-menu-item">
+                    <i class="bi bi-box-seam"></i>
+                    <span>My Orders</span>
+                </a>
+                <a href="{% url 'user_wishlist' %}" class="sidebar-menu-item">
+                    <i class="bi bi-heart"></i>
+                    <span>My Wishlist</span>
+                </a>
+                <a href="{% url 'user_cart' %}" class="sidebar-menu-item">
+                    <i class="bi bi-bag"></i>
+                    <span>Shopping Cart</span>
+                </a>
+                <a href="{% url 'check_delivery_availability' %}" class="sidebar-menu-item">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Delivery Coverage</span>
+                </a>
+                <a href="{% url 'change_password' %}" class="sidebar-menu-item">
+                    <i class="bi bi-shield-lock"></i>
+                    <span>Change Password</span>
+                </a>
+                <div class="sidebar-menu-divider"></div>
+                <a href="{% url 'user_home' %}" class="sidebar-menu-item">
+                    <i class="bi bi-shop"></i>
+                    <span>Browse Storefront</span>
+                </a>
+                <a href="{% url 'user_logout' %}" class="sidebar-menu-item is-logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Sign Out</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Account Content Area -->
+        <main class="profile-content-area">
+            <!-- Account Stat Counters -->
+            <div class="profile-stats-grid">
+                <a href="{% url 'user_orders' %}" class="profile-stat-card">
+                    <div class="stat-icon-circle stat-green">
+                        <i class="bi bi-box-seam-fill"></i>
+                    </div>
+                    <div class="stat-details">
+                        <strong class="stat-val">{{ customer.orders.count|default:0 }}</strong>
+                        <span class="stat-lbl">Total Orders</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'user_wishlist' %}" class="profile-stat-card">
+                    <div class="stat-icon-circle stat-gold">
+                        <i class="bi bi-heart-fill"></i>
+                    </div>
+                    <div class="stat-details">
+                        <strong class="stat-val">{{ customer.wishlist_items.count|default:0 }}</strong>
+                        <span class="stat-lbl">Saved Items</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'user_cart' %}" class="profile-stat-card">
+                    <div class="stat-icon-circle stat-blue">
+                        <i class="bi bi-bag-fill"></i>
+                    </div>
+                    <div class="stat-details">
+                        <strong class="stat-val">{{ customer.cart_items.count|default:0 }}</strong>
+                        <span class="stat-lbl">Items in Cart</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Profile Edit Card -->
+            <div class="detail-section-card">
+                <div class="detail-card-header">
+                    <div>
+                        <h2 class="detail-card-title">Personal Information</h2>
+                        <small class="page-subtitle">Update your personal contact details and delivery profile.</small>
+                    </div>
+                </div>
+
+                <form method="POST" action="{% url 'user_profile' %}" enctype="multipart/form-data" class="profile-form">
+                    {% csrf_token %}
+
+                    <div class="profile-avatar-uploader">
+                        <div class="uploader-preview">
+                            {% if customer.image %}
+                                <img src="/media/{{ customer.image }}" alt="{{ customer.name }}">
+                            {% else %}
+                                <span>{{ customer.name|first|upper }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="uploader-info">
+                            <label for="profile-image-input" class="btn-hero-secondary" style="font-size: 0.82rem; padding: 0.5rem 1.15rem; cursor: pointer;">
+                                <i class="bi bi-camera"></i>
+                                <span>Change Photo</span>
+                            </label>
+                            <input type="file" id="profile-image-input" name="image" accept="image/*" style="display: none;">
+                            <small>JPG, PNG or WEBP up to 5MB.</small>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group-field">
+                            <label for="cust-name" class="field-label">Full Name <span class="req">*</span></label>
+                            <input type="text" id="cust-name" name="name" class="field-input" value="{{ customer.name }}" required>
+                        </div>
+                        <div class="form-group-field">
+                            <label for="cust-username" class="field-label">Username <span class="req">*</span></label>
+                            <input type="text" id="cust-username" name="username" class="field-input" value="{{ customer.username }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group-field">
+                            <label for="cust-email" class="field-label">Email Address <span class="req">*</span></label>
+                            <input type="email" id="cust-email" name="email" class="field-input" value="{{ customer.email }}" required>
+                        </div>
+                        <div class="form-group-field">
+                            <label for="cust-phone" class="field-label">Phone Number <span class="req">*</span></label>
+                            <input type="tel" id="cust-phone" name="phone" class="field-input" value="{{ customer.phone }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group-field" style="max-width: 320px;">
+                        <label for="cust-gender" class="field-label">Gender</label>
+                        <select id="cust-gender" name="gender" class="field-select">
+                            <option value="">Select Gender</option>
+                            <option value="Male" {% if customer.gender == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if customer.gender == 'Female' %}selected{% endif %}>Female</option>
+                            <option value="Other" {% if customer.gender == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                        <button type="submit" class="btn-hero-primary" style="padding: 0.75rem 1.75rem;">
+                            <i class="bi bi-check2"></i>
+                            <span>Save Profile Changes</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

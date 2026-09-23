@@ -1,0 +1,613 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block extra_css %}
+
+<link rel="stylesheet"href="{% static 'css/owner_product.css' %}">
+
+{% endblock %}
+{% block content %}
+
+<div class="page-header">
+
+     <a href="{% url 'owner_dashboard' %}">
+        ← Back to Dashboard
+    </a>
+
+    <h2>Product Management</h2>
+
+    <button
+        class="add-btn"
+        id="addProductBtn">
+
+        + Add Product
+
+    </button>
+
+</div>
+
+<div class="stats-container">
+
+    <div class="stat-card">
+
+        <h3>Total Products</h3>
+
+        <span>{{ total_products }}</span>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Active</h3>
+
+        <span>{{ active_products }}</span>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Inactive</h3>
+
+        <span>{{ inactive_products }}</span>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Low Stock</h3>
+
+        <span>{{ low_stock_products }}</span>
+
+    </div>
+
+</div>
+<div class="table-toolbar">
+
+    <input
+        type="text"
+        id="productSearch"
+        placeholder="Search Product">
+
+    <select id="categoryFilter">
+
+        <option value="">All Categories</option>
+
+        {% for c in categories %}
+
+        <option value="{{ c.id }}">
+
+            {{ c.category_name }}
+
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <select id="sectionFilter">
+
+        <option value="">All Sections</option>
+
+        {% for s in sections %}
+
+        <option value="{{ s.id }}">
+
+            {{ s.section_name }}
+
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+</div>
+<table id="productTable">
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Image</th>
+
+<th>Product</th>
+
+<th>Category</th>
+
+<th>Section</th>
+
+<th>Actual Price</th>
+
+<th>Offer Price</th>
+
+<th>Quantity</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for p in products %}
+
+<tr>
+
+<td>{{ p.id }}</td>
+
+<td>
+
+{% if p.product_image %}
+
+<img
+src="/media/{{ p.product_image }}"
+class="product-image">
+
+{% else %}
+
+No Image
+
+{% endif %}
+
+</td>
+
+<td class="product-name">
+
+    {{ p.product_name }}
+
+</td>
+
+<td
+class="category-name"
+data-category="{{ p.category.id }}">
+
+{{ p.category.category_name }}
+
+</td>
+
+<td
+class="section-name"
+data-section="{{ p.section.id }}">
+
+{{ p.section.section_name }}
+
+</td>
+
+<td>
+
+₹ {{ p.actual_price }}
+
+</td>
+
+<td>
+
+{% if p.offer_price %}
+
+₹ {{ p.offer_price }}
+
+{% else %}
+
+--
+
+{% endif %}
+
+</td>
+
+<td>
+
+    {% if p.quantity == 0 %}
+
+        <span class="stock out-stock">
+
+            Out of Stock (0)
+
+        </span>
+
+    {% elif p.quantity <= 10 %}
+
+        <span class="stock low-stock">
+
+            Low Stock ({{ p.quantity }})
+
+        </span>
+
+    {% else %}
+
+        <span class="stock in-stock">
+
+            {{ p.quantity }}
+
+        </span>
+
+    {% endif %}
+
+</td>
+
+<td>
+
+<button
+    class="edit-btn"
+
+    data-id="{{ p.id }}"
+
+    data-name="{{ p.product_name|escapejs }}"
+
+    data-category="{{ p.category.id }}"
+
+    data-section="{{ p.section.id }}"
+
+    data-description="{{ p.description|default:''|escapejs }}"
+
+    data-actual-price="{{ p.actual_price }}"
+
+    data-offer-price="{{ p.offer_price|default:'' }}"
+
+    data-quantity="{{ p.quantity }}"
+
+    data-image="{{ p.product_image|default:'' }}">
+
+    Edit
+
+</button>
+<button
+    class="delete-btn"
+    data-url="{% url 'delete_product' p.id %}"
+    onclick="openDeleteProductModal(this)">
+
+    Delete
+
+</button>
+
+<a
+    href="{% url 'toggle_product_status' p.id %}"
+    class="status-btn">
+
+    {% if p.is_active %}
+        Active
+    {% else %}
+        Inactive
+    {% endif %}
+
+</a>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="10">
+
+No Products Found
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+<div id="addProductModal" class="modal-overlay">
+
+    <div class="modal-box">
+
+        <h2>Add Product</h2>
+
+        <form
+            method="POST"
+            enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+
+                <label>Product Name</label>
+
+                <input
+                    type="text"
+                    name="product_name"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Category</label>
+
+                <select name="category" required>
+
+                    <option value="">Select Category</option>
+
+                    {% for c in categories %}
+
+                    <option value="{{ c.id }}">
+
+                        {{ c.category_name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Section</label>
+
+                <select name="section" required>
+
+                    <option value="">Select Section</option>
+
+                    {% for s in sections %}
+
+                    <option value="{{ s.id }}">
+
+                        {{ s.section_name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Description</label>
+
+                <textarea
+                    name="description"
+                    rows="4"></textarea>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Actual Price</label>
+
+                <input
+                    type="number"
+                    step="0.01"
+                    name="actual_price"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Offer Price</label>
+
+                <input
+                    type="number"
+                    step="0.01"
+                    name="offer_price">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Quantity</label>
+
+                <input
+                    type="number"
+                    name="quantity"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Product Image</label>
+
+                <input
+                    type="file"
+                    name="product_image"
+                    accept="image/*">
+
+            </div>
+
+            <button type="submit">
+
+                Add Product
+
+            </button>
+            <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeAddProductModal()">
+
+                Cancel
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+<div id="editProductModal" class="modal-overlay">
+
+<div class="modal-box">
+
+<h2>Edit Product</h2>
+
+<form
+id="editProductForm"
+method="POST"
+enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<input
+type="text"
+name="product_name"
+id="editProductName"
+required>
+
+<br><br>
+
+<select
+name="category"
+id="editCategory">
+
+{% for c in categories %}
+
+<option value="{{ c.id }}">
+
+{{ c.category_name }}
+
+</option>
+
+{% endfor %}
+
+</select>
+
+<br><br>
+
+<select
+name="section"
+id="editSection">
+
+{% for s in sections %}
+
+<option value="{{ s.id }}">
+
+{{ s.section_name }}
+
+</option>
+
+{% endfor %}
+
+</select>
+
+<br><br>
+
+<textarea
+name="description"
+id="editDescription"></textarea>
+
+<br><br>
+
+<input
+type="number"
+step="0.01"
+name="actual_price"
+id="editActualPrice">
+
+<br><br>
+
+<input
+type="number"
+step="0.01"
+name="offer_price"
+id="editOfferPrice">
+
+<br><br>
+
+<input
+type="number"
+name="quantity"
+id="editQuantity">
+
+<br><br>
+
+<img
+id="editPreview"
+width="120"
+style="border-radius:8px;">
+
+<br><br>
+
+<input
+type="file"
+name="product_image">
+
+<br><br>
+
+<div class="modal-buttons">
+
+<button
+type="button"
+class="cancel-btn"
+onclick="closeEditProductModal()">
+
+Cancel
+
+</button>
+
+<button
+type="submit"
+class="confirm-delete-btn">
+
+Update
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+<div id="deleteProductModal" class="modal-overlay">
+
+    <div class="modal-box">
+
+        <div class="modal-icon">
+            🗑️
+        </div>
+
+        <h2>Delete Product</h2>
+
+        <p>
+            Are you sure you want to delete this product?
+        </p>
+
+        <small>
+            This action cannot be undone.
+        </small>
+
+        <div class="modal-buttons">
+
+            <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeDeleteProductModal()">
+
+                Cancel
+
+            </button>
+
+            <a
+                id="confirmDeleteBtn"
+                class="confirm-delete-btn">
+
+                Delete
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+{% block extra_js %}
+
+<script src="{% static 'js/owner_product.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,361 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f6f43">
+    <meta name="description" content="SalamMart - Fresh groceries, pantry essentials, and household items delivered conveniently to your doorstep.">
+    <title>{% block title %}SalamMart | Fresh Groceries For A Healthier You{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Design Tokens & Base Styles -->
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user_base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="user-shell">
+    <!-- Accessible Skip Link -->
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <!-- ======================================================================
+         PREMIUM PAGE PRELOADER (0 to 100% Experience)
+         ====================================================================== -->
+    <div id="sm-preloader" class="sm-preloader" aria-hidden="true">
+        <div class="sm-preloader-backdrop"></div>
+        <div class="sm-preloader-card">
+            <div class="sm-preloader-logo-ring-wrap">
+                <div class="sm-preloader-spin-ring"></div>
+                <img src="{% static 'images/salammart_brand.png' %}" alt="SalamMart" class="sm-preloader-logo">
+            </div>
+            
+            <div class="sm-preloader-text-group">
+                <span class="sm-preloader-brand-title">Salam<strong>Mart</strong></span>
+                <span class="sm-preloader-tagline">Fresh Groceries &bull; Better Living</span>
+            </div>
+
+            <div class="sm-preloader-gauge">
+                <div class="sm-preloader-gauge-header">
+                    <span class="sm-preloader-step-text" id="sm-preloader-step-text">Curating farm-fresh harvests...</span>
+                    <span class="sm-preloader-counter" id="sm-preloader-counter">0%</span>
+                </div>
+                <div class="sm-preloader-track">
+                    <div class="sm-preloader-bar" id="sm-preloader-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. Top Delivery Announcement Strip -->
+    <div class="user-top-strip">
+        <div class="user-top-strip-inner">
+            <div class="strip-message">
+                <span class="strip-icon" aria-hidden="true"><i class="bi bi-truck"></i></span>
+                <span>Free delivery on orders above <strong>₹499</strong> | Fresh groceries, delivered to your doorstep!</span>
+            </div>
+            <div class="strip-actions">
+                <a href="{% url 'check_delivery_availability' %}" class="strip-location" title="Check delivery coverage for your location">
+                    <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                    <span>Deliver to <strong>560001</strong></span>
+                    <i class="bi bi-chevron-down strip-chevron" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Sticky Main Header -->
+    <header class="user-header" id="user-main-header">
+        <div class="user-header-inner">
+            <!-- Brand Logo (Authentic SalamMart Logo) -->
+            <a class="user-brand" href="{% url 'user_home' %}" aria-label="SalamMart Home">
+                <img src="{% static 'images/salammart_horizontal.png' %}" alt="SalamMart" class="brand-logo-img">
+                <span class="brand-tagline">Fresh Groceries &bull; A Better Tomorrow</span>
+            </a>
+
+            <!-- Search Bar (Centered, with green square button matching reference) -->
+            <form class="user-search-bar" method="GET" action="{% url 'user_home' %}#products" role="search">
+                <label class="sr-only" for="global-search-input">Search for fresh products, categories...</label>
+                <div class="search-input-wrapper">
+                    <i class="bi bi-search search-icon-left" aria-hidden="true"></i>
+                    <input 
+                        id="global-search-input" 
+                        type="search" 
+                        name="search" 
+                        placeholder="Search for fresh products, categories..." 
+                        value="{{ search|default:'' }}"
+                        autocomplete="off"
+                        aria-label="Search groceries">
+                    {% if search %}
+                        <a href="{% url 'user_home' %}#products" class="search-clear-btn" aria-label="Clear search">&times;</a>
+                    {% endif %}
+                    <button type="submit" class="search-submit-btn" aria-label="Submit search">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Desktop Nav Links -->
+            <nav class="user-nav-links" aria-label="Main Navigation">
+                <a class="nav-item {% if request.resolver_match.url_name == 'user_home' and not search and not selected_category and not selected_section %}is-active{% endif %}" href="{% url 'user_home' %}">Home</a>
+                <a class="nav-item" href="{% url 'user_home' %}#offers">Offers</a>
+                <a class="nav-item" href="{% url 'user_info' %}#about">About</a>
+                <a class="nav-item" href="{% url 'user_info' %}#contact">Contact</a>
+            </nav>
+
+            <!-- Action Controls (Wishlist, Cart, Profile) -->
+            <div class="user-header-actions">
+                <!-- Wishlist -->
+                <a class="action-btn" href="{% url 'user_wishlist' %}" title="Wishlist" aria-label="View saved wishlist">
+                    <span class="action-icon-wrap">
+                        <i class="bi bi-heart" aria-hidden="true"></i>
+                    </span>
+                    <span class="action-label">Wishlist</span>
+                </a>
+
+                <!-- Cart -->
+                <a class="action-btn cart-btn" href="{% url 'user_cart' %}" title="Shopping Cart" aria-label="View shopping cart">
+                    <span class="action-icon-wrap">
+                        <i class="bi bi-bag" aria-hidden="true"></i>
+                    </span>
+                    <span class="action-label">Cart</span>
+                </a>
+
+                <!-- Account / Profile Dropdown -->
+                {% if request.session.customer_id %}
+                    <div class="user-account-dropdown">
+                        <button class="account-trigger-btn" type="button" aria-expanded="false" aria-controls="user-account-menu" aria-haspopup="true">
+                            <span class="action-icon-wrap">
+                                {% if request.session.customer_image %}
+                                    <img src="/media/{{ request.session.customer_image }}" alt="{{ request.session.customer_name }}" class="account-avatar-img">
+                                {% else %}
+                                    <i class="bi bi-person"></i>
+                                {% endif %}
+                            </span>
+                            <span class="action-label">Profile</span>
+                        </button>
+                        <div class="dropdown-panel" id="user-account-menu" role="menu" hidden>
+                            <div class="dropdown-greeting">
+                                <small>Signed in as</small>
+                                <strong>{{ request.session.customer_name }}</strong>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="{% url 'user_profile' %}" class="dropdown-item" role="menuitem">
+                                <i class="bi bi-person-circle"></i>
+                                <span>My Profile</span>
+                            </a>
+                            <a href="{% url 'user_orders' %}" class="dropdown-item" role="menuitem">
+                                <i class="bi bi-box-seam"></i>
+                                <span>My Orders</span>
+                            </a>
+                            <a href="{% url 'user_wishlist' %}" class="dropdown-item" role="menuitem">
+                                <i class="bi bi-heart"></i>
+                                <span>Wishlist</span>
+                            </a>
+                            <a href="{% url 'user_cart' %}" class="dropdown-item" role="menuitem">
+                                <i class="bi bi-bag"></i>
+                                <span>Shopping Cart</span>
+                            </a>
+                            <a href="{% url 'check_delivery_availability' %}" class="dropdown-item" role="menuitem">
+                                <i class="bi bi-geo-alt"></i>
+                                <span>Delivery Area</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="{% url 'user_logout' %}" class="dropdown-item dropdown-logout" role="menuitem">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Sign Out</span>
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="user-account-dropdown">
+                        <a href="{% url 'user_login' %}" class="action-btn" title="Sign In" aria-label="Sign In to your account">
+                            <span class="action-icon-wrap">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            <span class="action-label">Profile</span>
+                        </a>
+                    </div>
+                {% endif %}
+
+                <!-- Mobile Navigation Toggle Button -->
+                <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav-drawer" aria-label="Toggle navigation menu">
+                    <span class="bar bar-1"></span>
+                    <span class="bar bar-2"></span>
+                    <span class="bar bar-3"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Navigation -->
+        <div class="mobile-nav-drawer" id="mobile-nav-drawer" hidden>
+            <form class="mobile-drawer-search" method="GET" action="{% url 'user_home' %}#products">
+                <div class="search-input-wrapper">
+                    <i class="bi bi-search search-icon-left" aria-hidden="true"></i>
+                    <input type="search" name="search" placeholder="Search groceries..." value="{{ search|default:'' }}" aria-label="Search groceries">
+                    <button type="submit" class="search-submit-btn" aria-label="Search"><i class="bi bi-search"></i></button>
+                </div>
+            </form>
+
+            <div class="mobile-nav-list">
+                <a class="mobile-nav-link" href="{% url 'user_home' %}"><i class="bi bi-house-door"></i> Home</a>
+                <a class="mobile-nav-link" href="{% url 'user_home' %}#categories"><i class="bi bi-grid"></i> Categories</a>
+                <a class="mobile-nav-link" href="{% url 'user_home' %}#offers"><i class="bi bi-tag"></i> Offers & Deals</a>
+                <a class="mobile-nav-link" href="{% url 'user_info' %}#about"><i class="bi bi-info-circle"></i> About Us</a>
+                <a class="mobile-nav-link" href="{% url 'user_info' %}#contact"><i class="bi bi-envelope"></i> Contact Us</a>
+                <a class="mobile-nav-link" href="{% url 'check_delivery_availability' %}"><i class="bi bi-geo-alt"></i> Check Delivery</a>
+            </div>
+
+            <div class="mobile-drawer-footer">
+                {% if request.session.customer_id %}
+                    <div class="mobile-drawer-user">
+                        <span>Signed in as <strong>{{ request.session.customer_name }}</strong></span>
+                    </div>
+                    <div class="mobile-user-links">
+                        <a href="{% url 'user_profile' %}" class="btn-secondary-full"><i class="bi bi-person"></i> Profile</a>
+                        <a href="{% url 'user_orders' %}" class="btn-secondary-full"><i class="bi bi-box-seam"></i> Orders</a>
+                        <a href="{% url 'user_logout' %}" class="btn-logout-full"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+                    </div>
+                {% else %}
+                    <div class="mobile-auth-grid">
+                        <a href="{% url 'user_login' %}" class="btn-auth-login">Sign In</a>
+                        <a href="{% url 'user_register' %}" class="btn-auth-register">Create Account</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="mobile-overlay" id="mobile-overlay" hidden></div>
+    </header>
+
+    <!-- Alert / Toast Messages -->
+    {% if messages %}
+        <div class="user-messages-container" aria-live="polite">
+            {% for message in messages %}
+                <div class="user-toast-message toast-{{ message.tags|default:'info' }}" role="alert">
+                    <span class="toast-icon" aria-hidden="true">
+                        {% if message.tags == 'success' %}
+                            <i class="bi bi-check-circle-fill"></i>
+                        {% elif message.tags == 'error' %}
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        {% elif message.tags == 'warning' %}
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                        {% else %}
+                            <i class="bi bi-info-circle-fill"></i>
+                        {% endif %}
+                    </span>
+                    <div class="toast-body">{{ message }}</div>
+                    <button type="button" class="toast-close-btn" aria-label="Dismiss message">&times;</button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content Slot -->
+    <main id="main-content" class="user-main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Clean Modern Footer (White Background matching Reference Image) -->
+    <footer class="user-footer" aria-label="Site Footer">
+        <div class="footer-container">
+            <div class="footer-top-grid">
+                <!-- Col 1: Brand & Tagline -->
+                <div class="footer-brand-col">
+                    <a class="footer-brand" href="{% url 'user_home' %}" aria-label="SalamMart Home">
+                        <img src="{% static 'images/salammart_horizontal.png' %}" alt="SalamMart" class="footer-brand-logo-img">
+                        <span class="brand-tagline">Fresh Groceries &bull; A Better Tomorrow</span>
+                    </a>
+                    <p class="footer-about-text">
+                        Quality groceries. Convenient delivery. A healthier tomorrow.
+                    </p>
+                    <div class="footer-social-links" aria-label="Social media links">
+                        <a href="#" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="social-icon" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                        <a href="#" class="social-icon" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div class="footer-nav-col">
+                    <h3 class="footer-col-title">Quick Links</h3>
+                    <ul class="footer-links-list">
+                        <li><a href="{% url 'user_home' %}">Home</a></li>
+                        <li><a href="{% url 'user_home' %}#categories">Categories</a></li>
+                        <li><a href="{% url 'user_home' %}#offers">Offers</a></li>
+                        <li><a href="{% url 'user_info' %}#about">About</a></li>
+                        <li><a href="{% url 'user_info' %}#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Customer Service -->
+                <div class="footer-nav-col">
+                    <h3 class="footer-col-title">Customer Service</h3>
+                    <ul class="footer-links-list">
+                        <li><a href="{% url 'user_info' %}#faq">Help Center</a></li>
+                        <li><a href="{% url 'check_delivery_availability' %}">Delivery Information</a></li>
+                        <li><a href="{% url 'user_info' %}#returns">Returns & Refunds</a></li>
+                        <li><a href="{% url 'user_info' %}#faq">FAQ</a></li>
+                        <li><a href="{% url 'user_orders' %}">Track Order</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Our Policies -->
+                <div class="footer-nav-col">
+                    <h3 class="footer-col-title">Our Policies</h3>
+                    <ul class="footer-links-list">
+                        <li><a href="{% url 'user_info' %}#privacy">Privacy Policy</a></li>
+                        <li><a href="{% url 'user_info' %}#terms">Terms & Conditions</a></li>
+                        <li><a href="{% url 'user_info' %}#cancellation">Cancellation Policy</a></li>
+                        <li><a href="{% url 'user_info' %}#shipping">Shipping Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 5: Download Our App -->
+                <div class="footer-nav-col footer-app-col">
+                    <h3 class="footer-col-title">Download Our App</h3>
+                    <p class="footer-app-desc">Get the best shopping experience on the go.</p>
+                    <div class="app-badges-wrap">
+                        <div class="app-badge-btn" role="button" tabindex="0" aria-label="Get it on Google Play">
+                            <i class="bi bi-google-play"></i>
+                            <div class="app-badge-text">
+                                <small>GET IT ON</small>
+                                <strong>Google Play</strong>
+                            </div>
+                        </div>
+                        <div class="app-badge-btn" role="button" tabindex="0" aria-label="Download on the App Store">
+                            <i class="bi bi-apple"></i>
+                            <div class="app-badge-text">
+                                <small>Download on the</small>
+                                <strong>App Store</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom Bar -->
+            <div class="footer-bottom-bar">
+                <p class="footer-copy">&copy; {% now "Y" %} SalamMart. All rights reserved.</p>
+                <p class="footer-made-with">Made with <i class="bi bi-heart-fill heart-pulse"></i> for a healthier tomorrow.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Back to Top Button (Green Circle with Arrow) -->
+    <button class="back-to-top-btn" id="back-to-top" type="button" aria-label="Scroll back to top" title="Back to top">
+        <i class="bi bi-arrow-up-short" aria-hidden="true"></i>
+    </button>
+
+    <!-- Global Base JS -->
+    <script src="{% static 'js/user_base.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

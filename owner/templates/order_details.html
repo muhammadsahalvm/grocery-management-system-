@@ -1,0 +1,350 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+
+{% block extra_css %}
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/order_details.css' %}">
+
+{% endblock %}
+
+{% block page_title %}
+Order Details
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <a href="{% url 'owner_order' %}">
+        ← Back to Orders
+    </a>
+
+</div>
+
+
+<div>
+
+    <h1>
+        Order {{ order.order_number }}
+    </h1>
+
+    <p>
+        {{ order.created_at|date:"d M Y, h:i A" }}
+    </p>
+
+</div>
+
+
+<!-- Customer -->
+
+<div>
+
+    <h3>
+        Customer
+    </h3>
+
+    <p>
+        <strong>Name:</strong>
+        {{ order.customer.name }}
+    </p>
+
+    <p>
+        <strong>Username:</strong>
+        {{ order.customer.username }}
+    </p>
+
+    <p>
+        <strong>Phone:</strong>
+        {{ order.customer.phone }}
+    </p>
+
+    <p>
+        <strong>Email:</strong>
+        {{ order.customer.email }}
+    </p>
+
+</div>
+
+
+<!-- Delivery -->
+
+<div>
+
+    <h3>
+        Delivery Information
+    </h3>
+
+    <p>
+        <strong>Address:</strong>
+    </p>
+
+    <p>
+        {{ order.address }}
+    </p>
+
+
+    <p>
+
+        <strong>
+            Delivery Area:
+        </strong>
+
+        {% if order.delivery_area %}
+
+            {{ order.delivery_area.locality }}
+            -
+            {{ order.delivery_area.pincode }}
+
+        {% else %}
+
+            Not specified
+
+        {% endif %}
+
+    </p>
+
+
+    <p>
+
+        <strong>
+            Delivery Charge:
+        </strong>
+
+        {% if order.delivery_area %}
+
+            ₹{{ order.delivery_area.delivery_charge }}
+
+        {% else %}
+
+            ₹0.00
+
+        {% endif %}
+
+    </p>
+
+
+    <p>
+
+        <strong>
+            Delivery Type:
+        </strong>
+
+        {{ order.get_delivery_type_display }}
+
+    </p>
+
+
+    {% if order.delivery_type == "scheduled" %}
+
+        <p>
+
+            <strong>
+                Scheduled Date:
+            </strong>
+
+            {% if order.scheduled_date %}
+
+                {{ order.scheduled_date|date:"d M Y" }}
+
+            {% else %}
+
+                Not specified
+
+            {% endif %}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Scheduled Slot:
+            </strong>
+
+            {% if order.scheduled_slot %}
+
+                {{ order.scheduled_slot }}
+
+            {% else %}
+
+                Not specified
+
+            {% endif %}
+
+        </p>
+
+    {% endif %}
+
+</div>
+
+
+<!-- Payment -->
+
+<div>
+
+    <h3>
+        Payment
+    </h3>
+
+    <p>
+        <strong>Method:</strong>
+        {{ order.get_payment_method_display }}
+    </p>
+
+    <p>
+        <strong>Payment Status:</strong>
+        {{ order.get_payment_status_display }}
+    </p>
+
+</div>
+
+
+<!-- Order Status -->
+
+<p>
+    Current Status:
+    <strong>
+        {{ order.get_status_display }}
+    </strong>
+</p>
+
+
+{% if order.status != "delivered" and order.status != "cancelled" %}
+
+<form
+    method="POST"
+    action="{% url 'update_order_status' order.id %}">
+
+    {% csrf_token %}
+
+    <select name="status">
+
+       {% for value, label in status_choices %}
+
+        <option
+            value="{{ value }}"
+            {% if order.status == value %}
+            selected
+            {% endif %}>
+
+            {{ label }}
+
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+
+    <button type="submit">
+
+        Update Status
+
+    </button>
+
+</form>
+
+{% else %}
+
+<p>
+    This order is {{ order.get_status_display|lower }}
+    and can no longer be modified.
+</p>
+
+{% endif %}
+
+
+<!-- Products -->
+
+<div>
+
+    <h3>
+        Ordered Products
+    </h3>
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>#</th>
+
+                <th>Product</th>
+
+                <th>Quantity</th>
+
+                <th>Unit Price</th>
+
+                <th>Total</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+        {% for item in items %}
+
+            <tr>
+
+                <td>
+                    {{ forloop.counter }}
+                </td>
+
+                <td>
+                    {{ item.product_name }}
+                </td>
+
+                <td>
+                    {{ item.quantity }}
+                </td>
+
+                <td>
+                    ₹{{ item.unit_price }}
+                </td>
+
+                <td>
+                    ₹{{ item.total_price }}
+                </td>
+
+            </tr>
+
+        {% empty %}
+
+            <tr>
+
+                <td colspan="5">
+                    No products found for this order.
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<!-- Total -->
+
+<div>
+
+    <h3>
+        Order Total
+    </h3>
+
+    <strong>
+        ₹{{ order.total_amount }}
+    </strong>
+
+</div>
+
+{% endblock %}

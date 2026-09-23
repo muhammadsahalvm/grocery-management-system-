@@ -1,0 +1,54 @@
+<header class="app-header">
+
+    <div class="header-left">
+
+        <div class="header-page-info">
+
+            <span class="header-eyebrow">
+                Staff Portal
+            </span>
+
+            <strong class="header-page-title">
+
+                {% block page_title %}
+                Dashboard
+                {% endblock %}
+
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <div class="profile">
+
+            <div class="profile-avatar">
+
+                {{ request.session.staff_name|slice:":1"|upper }}
+
+            </div>
+
+            <div class="profile-details">
+
+                <strong>
+
+                    {{ request.session.staff_name }}
+
+                </strong>
+
+                <span>
+
+                    Staff
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>

@@ -1,0 +1,462 @@
+{% extends "base/base_staff.html" %}
+
+{% block page_title %}
+Inventory
+{% endblock %}
+
+{% block content %}
+
+<div class="inventory-page">
+
+    <!-- ==========================================
+         PAGE HEADER
+    =========================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Inventory Management
+            </h1>
+
+            <p>
+                Search products and update stock quickly.
+            </p>
+
+        </div>
+
+        <a href="{% url 'staff_dashboard' %}" class="back-dashboard-btn">
+            <i class="bi bi-arrow-left"></i>
+            Back to Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- ==========================================
+         INVENTORY TOOLBAR
+    =========================================== -->
+
+    <div class="inventory-toolbar">
+
+        <form method="GET" class="inventory-filter-form">
+
+            <div class="search-field">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search products..."
+                    value="{{ search }}">
+
+            </div>
+
+
+            <div class="custom-select" data-select="category">
+
+                <input
+                    type="hidden"
+                    name="category"
+                    value="{{ selected_category|default:'' }}">
+
+                <button type="button" class="custom-select-trigger">
+                    <span class="custom-select-value">
+                        {% if selected_category %}
+                            {% for c in categories %}
+                                {% if selected_category == c.id|stringformat:"s" %}
+                                    {{ c.category_name }}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            All Categories
+                        {% endif %}
+                    </span>
+                    <i class="bi bi-chevron-down"></i>
+                </button>
+
+                <div class="custom-select-menu">
+                    <button
+                        type="button"
+                        class="custom-select-option {% if not selected_category %}selected{% endif %}"
+                        data-value="">
+                        All Categories
+                    </button>
+
+                    {% for c in categories %}
+                        <button
+                            type="button"
+                            class="custom-select-option {% if selected_category == c.id|stringformat:'s' %}selected{% endif %}"
+                            data-value="{{ c.id }}">
+                            {{ c.category_name }}
+                        </button>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+
+            <div class="custom-select" data-select="section">
+
+                <input
+                    type="hidden"
+                    name="section"
+                    value="{{ selected_section|default:'' }}">
+
+                <button type="button" class="custom-select-trigger">
+                    <span class="custom-select-value">
+                        {% if selected_section %}
+                            {% for s in sections %}
+                                {% if selected_section == s.id|stringformat:"s" %}
+                                    {{ s.section_name }}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            All Sections
+                        {% endif %}
+                    </span>
+                    <i class="bi bi-chevron-down"></i>
+                </button>
+
+                <div class="custom-select-menu">
+                    <button
+                        type="button"
+                        class="custom-select-option {% if not selected_section %}selected{% endif %}"
+                        data-value="">
+                        All Sections
+                    </button>
+
+                    {% for s in sections %}
+                        <button
+                            type="button"
+                            class="custom-select-option {% if selected_section == s.id|stringformat:'s' %}selected{% endif %}"
+                            data-value="{{ s.id }}">
+                            {{ s.section_name }}
+                        </button>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i>
+                Search
+            </button>
+
+            {% if search or selected_category or selected_section %}
+                <a href="{% url 'staff_product' %}" class="inventory-clear-btn">Clear</a>
+            {% endif %}
+
+        </form>
+
+    </div>
+
+
+    <!-- ==========================================
+         PRODUCT TABLE
+    =========================================== -->
+
+    <div class="inventory-table-card">
+
+        <div class="inventory-table-header">
+
+            <div>
+
+                <h2>
+                    Products
+                </h2>
+
+                <span>
+                    {{ products|length }} product{{ products|length|pluralize }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="inventory-table-wrapper">
+
+            <table class="inventory-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Section
+                        </th>
+
+                        <th>
+                            Rack
+                        </th>
+
+                        <th>
+                            Price
+                        </th>
+
+                        <th>
+                            Stock
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for p in products %}
+
+                        <tr>
+
+                            <!-- Product -->
+
+                            <td>
+
+                                <div class="inventory-product">
+
+                                    <div class="inventory-product-image">
+
+                                        {% if p.product_image %}
+
+                                            <img
+                                                src="/media/{{ p.product_image }}"
+                                                alt="{{ p.product_name }}">
+
+                                        {% else %}
+
+                                            <div class="inventory-no-image">
+
+                                                <i class="bi bi-image"></i>
+
+                                            </div>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <div class="inventory-product-info">
+
+                                        <strong>
+                                            {{ p.product_name }}
+                                        </strong>
+
+                                        <span>
+                                            Product #{{ p.id }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- Category -->
+
+                            <td>
+
+                                <span class="inventory-secondary-text">
+
+                                    {{ p.category.category_name }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- Section -->
+
+                            <td>
+
+                                <span class="inventory-secondary-text">
+
+                                    {{ p.section.section_name }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- Rack -->
+
+                            <td>
+
+                                <span class="rack-badge">
+
+                                    {{ p.section.rack_number }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- Price -->
+
+                            <td>
+
+                                <div class="inventory-price">
+
+                                    {% if p.offer_price %}
+
+                                        <strong>
+                                            ₹{{ p.offer_price }}
+                                        </strong>
+
+                                        <span>
+                                            ₹{{ p.actual_price }}
+                                        </span>
+
+                                    {% else %}
+
+                                        <strong>
+                                            ₹{{ p.actual_price }}
+                                        </strong>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- Stock -->
+
+                            <td>
+
+                                <strong class="stock-number">
+
+                                    {{ p.quantity }}
+
+                                </strong>
+
+                            </td>
+
+
+                            <!-- Status -->
+
+                            <td>
+
+                                {% if p.quantity == 0 %}
+
+                                    <span class="stock-badge out">
+
+                                        <span class="stock-dot"></span>
+
+                                        Out of Stock
+
+                                    </span>
+
+                                {% elif p.quantity <= 10 %}
+
+                                    <span class="stock-badge low">
+
+                                        <span class="stock-dot"></span>
+
+                                        Low Stock
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="stock-badge available">
+
+                                        <span class="stock-dot"></span>
+
+                                        In Stock
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Action -->
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="inventory-update-btn updateStockBtn"
+                                    data-id="{{ p.id }}"
+                                    data-name="{{ p.product_name }}"
+                                    data-stock="{{ p.quantity }}">
+
+                                    <i class="bi bi-pencil-square"></i>
+
+                                    Update
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="inventory-empty">
+
+                                <div class="inventory-empty-content">
+
+                                    <div class="inventory-empty-icon">
+
+                                        <i class="bi bi-box-seam"></i>
+
+                                    </div>
+
+                                    <strong>
+                                        No Products Found
+                                    </strong>
+
+                                    <span>
+                                        Try changing your search or filters.
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% include "components/update_stock_modal.html" %}
+
+{% endblock %}

@@ -1,0 +1,105 @@
+:root {
+    /* ==========================================
+       SALAM MART BRAND IDENTITY
+    ========================================== */
+    --color-primary: #1f6f43;
+    --color-primary-dark: #185936;
+    --color-primary-light: #eaf5ee;
+    --color-primary-subtle: #f1f8f3;
+    --color-accent: #d9a441;
+    --color-accent-light: #fdf6e7;
+    --color-accent-hover: #c49132;
+
+    /* Semantic Aliases for User Storefront */
+    --user-green: var(--color-primary);
+    --user-green-dark: var(--color-primary-dark);
+    --user-green-soft: var(--color-primary-light);
+    --user-green-subtle: var(--color-primary-subtle);
+    --user-gold: var(--color-accent);
+    --user-gold-soft: var(--color-accent-light);
+
+    /* ==========================================
+       SURFACES & BACKGROUNDS
+    ========================================== */
+    --color-bg: #f6f7f5;
+    --color-surface: #ffffff;
+    --color-surface-soft: #fafbf9;
+    --color-surface-hover: #f3f5f2;
+
+    --user-background: var(--color-bg);
+    --user-surface: var(--color-surface);
+    --user-surface-soft: var(--color-surface-soft);
+
+    /* ==========================================
+       TYPOGRAPHY & TEXT
+    ========================================== */
+    --color-text: #1f2933;
+    --color-text-secondary: #4b5768;
+    --color-text-muted: #667085;
+    --color-text-light: #98a2b3;
+    --color-text-white: #ffffff;
+
+    --user-ink: var(--color-text);
+    --user-muted: var(--color-text-muted);
+
+    --font-heading: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-body: 'DM Sans', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* ==========================================
+       STATUS & FEEDBACK
+    ========================================== */
+    --color-success: #1f8a4c;
+    --color-success-bg: #eaf7ed;
+    --color-warning: #c78300;
+    --color-warning-bg: #fff6df;
+    --color-danger: #c93636;
+    --color-danger-bg: #fdecec;
+    --color-info: #2563eb;
+    --color-info-bg: #eff6ff;
+
+    /* ==========================================
+       BORDERS & DIVIDERS
+    ========================================== */
+    --color-border: #e4e7ec;
+    --color-border-light: #eef1f4;
+    --color-border-hover: #cbd5e1;
+    --user-line: var(--color-border);
+
+    /* ==========================================
+       ELEVATION & SHADOWS
+    ========================================== */
+    --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.04);
+    --shadow-sm: 0 2px 6px rgba(16, 24, 40, 0.06);
+    --shadow-md: 0 8px 22px rgba(16, 24, 40, 0.08);
+    --shadow-lg: 0 16px 36px rgba(16, 24, 40, 0.10);
+    --shadow-xl: 0 24px 50px rgba(16, 24, 40, 0.14);
+    --shadow-card-hover: 0 14px 32px rgba(31, 111, 67, 0.12);
+    --user-shadow: var(--shadow-md);
+
+    /* ==========================================
+       BORDER RADII
+    ========================================== */
+    --radius-xs: 4px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 22px;
+    --radius-2xl: 28px;
+    --radius-full: 9999px;
+    --user-radius: var(--radius-lg);
+
+    /* ==========================================
+       CONTAINER & LAYOUT
+    ========================================== */
+    --container-max: 1240px;
+    --container-pad: 1.5rem;
+    --header-height: 74px;
+    --topbar-height: 36px;
+
+    /* ==========================================
+       TRANSITIONS
+    ========================================== */
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}

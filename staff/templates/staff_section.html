@@ -1,0 +1,316 @@
+{% extends "base/base_staff.html" %}
+
+{% block page_title %}
+Sections
+{% endblock %}
+
+{% block content %}
+
+<div class="section-page">
+
+    <!-- ==============================
+         PAGE HEADER
+    =============================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Section Management
+            </h1>
+
+            <p>
+                View store sections and their assigned rack locations.
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'staff_dashboard' %}"
+            class="back-dashboard-btn">
+
+            <i class="bi bi-arrow-left"></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+
+    <!-- ==============================
+         STATISTICS
+    =============================== -->
+
+    <div class="section-stat-card">
+
+        <div class="section-stat-icon">
+
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+
+        </div>
+
+        <div>
+
+            <span>
+                Total Sections
+            </span>
+
+            <strong>
+                {{ total_sections }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================
+         SECTION TABLE
+    =============================== -->
+
+    <div class="section-table-card">
+
+        <div class="section-table-header">
+
+            <div>
+
+                <h2>
+                    Store Sections
+                </h2>
+
+                <span>
+                    Section and rack information
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==============================
+             SEARCH
+        =============================== -->
+
+        <div class="section-search">
+
+            <form method="GET">
+
+                <div class="search-field">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Search section or rack number..."
+                        value="{{ search }}">
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    <i class="bi bi-search"></i>
+
+                    Search
+
+                </button>
+
+
+                {% if search %}
+
+                <a
+                    href="{% url 'staff_section' %}"
+                    class="inventory-clear-btn">
+
+                    Clear
+
+                </a>
+
+                {% endif %}
+
+            </form>
+
+        </div>
+
+
+        <!-- ==============================
+             TABLE
+        =============================== -->
+
+        <div class="section-table-wrapper">
+
+            <table class="section-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            #
+                        </th>
+
+                        <th>
+                            Section
+                        </th>
+
+                        <th>
+                            Rack Number
+                        </th>
+
+                        <th>
+                            Products
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for s in sections %}
+
+                    <tr>
+
+                        <!-- Number -->
+
+                        <td>
+
+                            <span class="section-number">
+
+                                {{ forloop.counter }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Section -->
+
+                        <td>
+
+                            <div class="section-name">
+
+                                <div class="section-row-icon">
+
+                                    <i class="bi bi-grid-3x3-gap-fill"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <strong>
+
+                                        {{ s.section_name }}
+
+                                    </strong>
+
+                                    <span>
+
+                                        Store section
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- Rack -->
+
+                        <td>
+
+                            <div class="rack-location">
+
+                                <div class="rack-icon">
+
+                                    <i class="bi bi-box-seam"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Rack
+                                    </span>
+
+                                    <strong>
+                                        {{ s.rack_number }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- Products -->
+
+                        <td>
+
+                            <span class="section-product-count">
+
+                                <i class="bi bi-box-seam"></i>
+
+                                {{ s.total_products }}
+
+                                product{{ s.total_products|pluralize }}
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="section-empty">
+
+                            <div class="section-empty-content">
+
+                                <div class="section-empty-icon">
+
+                                    <i class="bi bi-grid-3x3-gap"></i>
+
+                                </div>
+
+                                <strong>
+                                    No Sections Found
+                                </strong>
+
+                                <span>
+                                    Try changing your search.
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

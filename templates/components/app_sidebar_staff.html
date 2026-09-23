@@ -1,0 +1,94 @@
+{% load static %}
+
+<aside class="app-sidebar">
+
+    <!-- Brand -->
+
+    <div class="sidebar-brand">
+
+        <div class="sidebar-brand-icon">
+
+            <i class="bi bi-basket2-fill"></i>
+
+        </div>
+
+        <span class="sidebar-brand-text">
+
+            Salam Mart
+
+        </span>
+
+    </div>
+
+
+    <!-- Navigation -->
+
+    <nav class="sidebar-nav">
+
+        <div class="sidebar-section-title">
+
+            Main
+
+        </div>
+
+        <a
+            href="{% url 'staff_dashboard' %}"
+            class="{% if request.resolver_match.url_name == 'staff_dashboard' %}active{% endif %}">
+
+            <i class="bi bi-grid-1x2-fill"></i>
+
+            <span>Dashboard</span>
+
+        </a>
+
+
+        <a
+            href="{% url 'staff_product' %}"
+            class="{% if request.resolver_match.url_name == 'staff_product' %}active{% endif %}">
+
+            <i class="bi bi-box-seam-fill"></i>
+
+            <span>Products</span>
+
+        </a>
+
+
+        <a
+            href="{% url 'staff_category' %}"
+            class="{% if request.resolver_match.url_name == 'staff_category' %}active{% endif %}">
+
+            <i class="bi bi-tags-fill"></i>
+
+            <span>Categories</span>
+
+        </a>
+
+
+        <a
+            href="{% url 'staff_section' %}"
+            class="{% if request.resolver_match.url_name == 'staff_section' %}active{% endif %}">
+
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+
+            <span>Sections</span>
+
+        </a>
+
+    </nav>
+
+
+    <!-- Bottom -->
+
+    <div class="sidebar-footer">
+
+        <a href="{% url 'staff_logout' %}">
+
+            <i class="bi bi-box-arrow-left"></i>
+
+            <span>Logout</span>
+
+        </a>
+
+    </div>
+
+</aside>

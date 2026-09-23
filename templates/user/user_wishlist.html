@@ -1,0 +1,126 @@
+{% extends 'base/base_user.html' %}
+{% load static %}
+
+{% block title %}My Wishlist | SalamMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user_home.css' %}">
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Breadcrumbs -->
+    <nav class="nav-back-group" aria-label="Breadcrumb">
+        <a href="{% url 'user_home' %}" class="btn-back-nav">
+            <i class="bi bi-arrow-left"></i>
+            <span>Continue Shopping</span>
+        </a>
+        <a href="{% url 'user_profile' %}" class="btn-back-nav">
+            <i class="bi bi-person"></i>
+            <span>My Profile</span>
+        </a>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header-row">
+        <div>
+            <h1 class="page-title">My Wishlist</h1>
+            <p class="page-subtitle">Your saved favorites and pantry essentials ready to purchase whenever you need them.</p>
+        </div>
+        <span class="count-pill">{{ wishlist_items|length }} Saved Item{% if wishlist_items|length != 1 %}s{% endif %}</span>
+    </div>
+
+    {% if wishlist_items %}
+        <!-- Unified Product Grid (Exact same card as homepage!) -->
+        <div class="store-product-grid" style="margin-top: 1.5rem;">
+            {% for item in wishlist_items %}
+                <article class="store-product-card" id="wishlist-item-{{ item.id }}">
+                    <!-- Card Top Bar with Remove Wishlist Button -->
+                    <div class="card-top-bar">
+                        {% if item.product.offer_price and item.product.actual_price > item.product.offer_price %}
+                            <span class="discount-badge">Offer</span>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+                        <a href="{% url 'remove_from_wishlist' item.product.id %}" class="card-wishlist-btn is-active" title="Remove from wishlist" aria-label="Remove {{ item.product.product_name }} from wishlist">
+                            <i class="bi bi-heart-fill" style="color: var(--color-danger);"></i>
+                        </a>
+                    </div>
+
+                    <!-- Product Image -->
+                    <a href="{% url 'user_product_detail' item.product.id %}" class="product-card-image" aria-label="View {{ item.product.product_name }}">
+                        {% if item.product.product_image %}
+                            <img src="/media/{{ item.product.product_image }}" alt="{{ item.product.product_name }}" loading="lazy">
+                        {% else %}
+                            <div class="product-image-fallback">
+                                <i class="bi bi-basket2"></i>
+                            </div>
+                        {% endif %}
+                    </a>
+
+                    <!-- Card Body -->
+                    <div class="product-card-body">
+                        <span class="product-card-category">{{ item.product.category.category_name }}</span>
+                        <h3 class="product-card-title">
+                            <a href="{% url 'user_product_detail' item.product.id %}">{{ item.product.product_name }}</a>
+                        </h3>
+                        <p class="product-card-unit">{{ item.product.section.section_name }}</p>
+
+                        <div class="product-card-price-row">
+                            <div class="price-group">
+                                {% if item.product.offer_price %}
+                                    <strong class="price-current">₹{{ item.product.offer_price }}</strong>
+                                    <del class="price-original">₹{{ item.product.actual_price }}</del>
+                                {% else %}
+                                    <strong class="price-current">₹{{ item.product.actual_price }}</strong>
+                                {% endif %}
+                            </div>
+                            <div class="stock-indicator">
+                                {% if item.product.quantity == 0 %}
+                                    <span class="stock-badge stock-out">● Sold out</span>
+                                {% elif item.product.quantity <= 10 %}
+                                    <span class="stock-badge stock-low">● {{ item.product.quantity }} left</span>
+                                {% else %}
+                                    <span class="stock-badge stock-in">● In stock</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Card Action -->
+                        <div class="product-card-action">
+                            {% if item.product.quantity > 0 %}
+                                <form method="POST" action="{% url 'add_to_cart' item.product.id %}" class="add-to-cart-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn-add-cart">
+                                        <i class="bi bi-cart-plus-fill" aria-hidden="true"></i>
+                                        <span>Add to Cart</span>
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button type="button" class="btn-add-cart is-disabled" disabled>
+                                    <span>Unavailable</span>
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty Wishlist State -->
+        <div class="empty-state-box">
+            <div class="empty-state-icon">
+                <i class="bi bi-heart"></i>
+            </div>
+            <h2>Your Wishlist is Empty</h2>
+            <p>Save fresh groceries, fruits, and daily essentials here while browsing to easily buy them whenever you're ready.</p>
+            <a href="{% url 'user_home' %}" class="btn-hero-primary" style="display: inline-flex;">
+                <span>Explore Groceries</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

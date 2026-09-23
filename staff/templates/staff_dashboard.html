@@ -1,0 +1,262 @@
+{% extends "base/base_staff.html" %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- =========================
+         WELCOME
+    ========================== -->
+
+    <section class="dashboard-welcome">
+
+        <div class="welcome-content">
+
+            <span class="welcome-label">
+                Staff Portal
+            </span>
+
+            <h1>
+                Welcome back, {{ staff_name }}
+            </h1>
+
+            <p>
+                Here's an overview of your grocery inventory workspace.
+            </p>
+
+        </div>
+
+        <div class="welcome-icon">
+
+            <i class="bi bi-basket2-fill"></i>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         QUICK STATISTICS
+    ========================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Inventory Overview
+                </h2>
+
+                <p>
+                    Current inventory information
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-stat-grid">
+
+            <div class="dashboard-stat-card">
+
+                <div class="dashboard-stat-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div class="dashboard-stat-content">
+
+                    <span class="dashboard-stat-label">
+                        Total Products
+                    </span>
+
+                    <strong>
+                        {{ total_products }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-stat-card">
+
+                <div class="dashboard-stat-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+
+                <div class="dashboard-stat-content">
+
+                    <span class="dashboard-stat-label">
+                        Active Products
+                    </span>
+
+                    <strong>
+                        {{ active_products }}   
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-stat-card">
+
+                <div class="dashboard-stat-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+
+                <div class="dashboard-stat-content">
+
+                    <span class="dashboard-stat-label">
+                        Low Stock
+                    </span>
+
+                    <strong>
+                        {{ low_stock_products }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-stat-card">
+
+                <div class="dashboard-stat-icon">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                </div>
+
+                <div class="dashboard-stat-content">
+
+                    <span class="dashboard-stat-label">
+                        Sections
+                    </span>
+
+                    <strong>
+                        {{ total_sections }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         QUICK ACCESS
+    ========================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Quick Access
+                </h2>
+
+                <p>
+                    Frequently used inventory tools
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="quick-access-grid">
+
+            <a
+                href="{% url 'staff_product' %}"
+                class="quick-access-card">
+
+                <div class="quick-access-icon">
+
+                    <i class="bi bi-box-seam-fill"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>
+                        Products
+                    </h3>
+
+                    <p>
+                        View products and update stock.
+                    </p>
+
+                </div>
+
+                <i class="bi bi-arrow-up-right quick-access-arrow"></i>
+
+            </a>
+
+
+            <a
+                href="{% url 'staff_category' %}"
+                class="quick-access-card">
+
+                <div class="quick-access-icon">
+
+                    <i class="bi bi-tags-fill"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>
+                        Categories
+                    </h3>
+
+                    <p>
+                        Browse products by category.
+                    </p>
+
+                </div>
+
+                <i class="bi bi-arrow-up-right quick-access-arrow"></i>
+
+            </a>
+
+
+            <a
+                href="{% url 'staff_section' %}"
+                class="quick-access-card">
+
+                <div class="quick-access-icon">
+
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>
+                        Sections
+                    </h3>
+
+                    <p>
+                        Find sections and rack locations.
+                    </p>
+
+                </div>
+
+                <i class="bi bi-arrow-up-right quick-access-arrow"></i>
+
+            </a>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

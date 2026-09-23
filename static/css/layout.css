@@ -1,0 +1,209 @@
+/* ==========================================
+   APP LAYOUT
+========================================== */
+
+.app-layout {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    background: var(--color-bg);
+
+}
+
+
+/* ==========================================
+   SIDEBAR
+========================================== */
+
+.app-sidebar {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: var(--sidebar-width);
+
+    height: 100vh;
+
+    background: var(--color-surface);
+
+    border-right: 1px solid var(--color-border);
+
+    display: flex;
+
+    flex-direction: column;
+
+    z-index: 1000;
+
+    transition:
+        width var(--transition-normal),
+        transform var(--transition-normal);
+
+}
+
+
+/* ==========================================
+   MAIN AREA
+========================================== */
+
+.main-content {
+
+    width: calc(100% - var(--sidebar-width));
+
+    min-height: 100vh;
+
+    margin-left: var(--sidebar-width);
+
+    transition:
+        margin-left var(--transition-normal),
+        width var(--transition-normal);
+
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.app-header {
+
+    position: sticky;
+
+    top: 0;
+
+    height: var(--header-height);
+
+    background: rgba(255, 255, 255, 0.92);
+
+    backdrop-filter: blur(12px);
+
+    -webkit-backdrop-filter: blur(12px);
+
+    border-bottom: 1px solid var(--color-border);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        0
+        var(--space-7);
+
+    z-index: 900;
+
+}
+
+
+/* ==========================================
+   PAGE CONTAINER
+========================================== */
+
+.page-container {
+
+    width: 100%;
+
+    max-width: 1600px;
+
+    margin: 0 auto;
+
+    padding:
+        var(--space-7);
+
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 900px) {
+
+    .app-sidebar {
+
+        transform: translateX(-100%);
+
+    }
+
+    .app-sidebar.open {
+
+        transform: translateX(0);
+
+    }
+
+    .main-content {
+
+        width: 100%;
+
+        margin-left: 0;
+
+    }
+
+    .app-header {
+
+        padding:
+            0
+            var(--space-5);
+
+    }
+
+    .page-container {
+
+        padding:
+            var(--space-5);
+
+    }
+
+}
+
+/* ==========================================
+   GLOBAL RESPONSIVE FIXES
+========================================== */
+
+@media (max-width: 1100px) {
+
+    .page-container {
+        padding: var(--space-6);
+    }
+
+    .app-header {
+        padding: 0 var(--space-6);
+    }
+
+}
+
+
+@media (max-width: 900px) {
+
+    .page-container {
+        padding: var(--space-5);
+    }
+
+    .app-header {
+        height: 64px;
+        padding: 0 var(--space-5);
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .page-container {
+        padding: var(--space-4);
+    }
+
+    .app-header {
+        padding: 0 var(--space-4);
+    }
+
+    .header-page-title {
+        font-size: var(--font-size-md);
+    }
+
+}

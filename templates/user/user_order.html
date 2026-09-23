@@ -1,0 +1,95 @@
+{% extends 'base/base_user.html' %}
+{% load static %}
+
+{% block title %}My Orders | SalamMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Breadcrumb -->
+    <nav class="nav-back-group" aria-label="Breadcrumb">
+        <a href="{% url 'user_home' %}" class="btn-back-nav">
+            <i class="bi bi-arrow-left"></i>
+            <span>Continue Shopping</span>
+        </a>
+        <a href="{% url 'user_profile' %}" class="btn-back-nav">
+            <i class="bi bi-person"></i>
+            <span>My Profile</span>
+        </a>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header-row">
+        <div>
+            <h1 class="page-title">My Orders</h1>
+            <p class="page-subtitle">Track your live deliveries and browse your past grocery orders.</p>
+        </div>
+        <span class="count-pill">{{ orders|length }} Order{% if orders|length != 1 %}s{% endif %}</span>
+    </div>
+
+    {% if orders %}
+        <div class="orders-cards-list">
+            {% for order in orders %}
+                <article class="order-summary-card-item">
+                    <div class="order-card-topbar">
+                        <div class="order-num-group">
+                            <i class="bi bi-receipt-cutoff"></i>
+                            <div>
+                                <span class="order-label">Order Reference</span>
+                                <strong class="order-code">#{{ order.order_number }}</strong>
+                            </div>
+                        </div>
+
+                        <div class="order-meta-group">
+                            <span class="order-date">
+                                <i class="bi bi-calendar3"></i> {{ order.created_at|date:"M d, Y - H:i" }}
+                            </span>
+                            <span class="status-badge status-{{ order.status|lower|cut:' ' }}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="order-card-midbody">
+                        <div class="order-data-col">
+                            <small class="order-data-label">Payment</small>
+                            <strong class="order-data-val">{{ order.payment_method|upper }} ({{ order.get_payment_status_display }})</strong>
+                        </div>
+                        <div class="order-data-col">
+                            <small class="order-data-label">Items</small>
+                            <strong class="order-data-val">{{ order.items.count }} Item{% if order.items.count != 1 %}s{% endif %}</strong>
+                        </div>
+                        <div class="order-data-col">
+                            <small class="order-data-label">Total Amount</small>
+                            <strong class="order-data-val order-grand-val">₹{{ order.total_amount }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="order-card-actions">
+                        <a href="{% url 'user_order_detail' order.id %}" class="btn-view-order-details">
+                            <span>View Full Details & Receipt</span>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty Orders State -->
+        <div class="empty-state-box">
+            <div class="empty-state-icon">
+                <i class="bi bi-bag-x"></i>
+            </div>
+            <h2>No Orders Placed Yet</h2>
+            <p>You haven't placed any grocery orders with SalamMart yet. Discover fresh produce, dairy, and household essentials today!</p>
+            <a href="{% url 'user_home' %}" class="btn-hero-primary" style="display: inline-flex;">
+                <span>Start Shopping</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,267 @@
+/*==================================================
+SALAM MART
+REGISTRATION PAGE
+registration.css
+==================================================*/
+
+/*------------------------------------
+Override Container Height
+------------------------------------*/
+
+.auth-container{
+
+    min-height:92vh;
+
+}
+
+/*------------------------------------
+Left Section
+------------------------------------*/
+
+.left-section{
+
+    padding-top:50px;
+    padding-bottom:50px;
+
+}
+
+/*------------------------------------
+Title
+------------------------------------*/
+
+.left-section h1{
+
+    margin-bottom:10px;
+
+}
+
+/*------------------------------------
+Subtitle
+------------------------------------*/
+
+.subtitle{
+
+    margin-bottom:30px;
+
+}
+
+/*------------------------------------
+Form
+------------------------------------*/
+
+#registerForm{
+
+    margin-top:10px;
+
+}
+
+/*------------------------------------
+Input Group
+------------------------------------*/
+
+.input-group{
+
+    margin-bottom:20px;
+
+}
+
+/*------------------------------------
+Password Strength
+------------------------------------*/
+
+.strength-meter{
+
+    width:100%;
+    height:8px;
+
+    background:#e9ecef;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    margin-top:12px;
+
+}
+
+.strength-bar{
+
+    width:0%;
+
+    height:100%;
+
+    border-radius:10px;
+
+    transition:.35s ease;
+
+    background:#dc3545;
+
+}
+
+#strengthText{
+
+    display:block;
+
+    margin-top:8px;
+
+    color:#777;
+
+    font-size:13px;
+
+}
+
+/*------------------------------------
+Password Match Message
+------------------------------------*/
+
+.match-text{
+
+    margin-top:8px;
+
+    font-size:13px;
+
+    font-weight:500;
+
+}
+
+.match-success{
+
+    color:#28a745;
+
+}
+
+.match-error{
+
+    color:#dc3545;
+
+}
+
+/*------------------------------------
+Create Account Button
+------------------------------------*/
+
+.login-btn{
+
+    margin-top:15px;
+
+}
+
+/*------------------------------------
+Password Toggle
+------------------------------------*/
+
+.toggleConfirmPassword{
+
+    position:absolute;
+
+    right:18px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    cursor:pointer;
+
+    color:#888;
+
+    transition:.3s ease;
+
+}
+
+.toggleConfirmPassword:hover{
+
+    color:#2f8d46;
+
+}
+
+/*------------------------------------
+Divider
+------------------------------------*/
+
+.divider{
+
+    margin-top:35px;
+
+}
+
+/*------------------------------------
+Floating Cards
+------------------------------------*/
+
+.top-card{
+
+    top:70px;
+
+}
+
+.bottom-card{
+
+    bottom:70px;
+
+}
+
+/*------------------------------------
+Stats Card
+------------------------------------*/
+
+.stats-card h2{
+
+    color:#2f8d46;
+
+}
+
+/*------------------------------------
+Animation
+------------------------------------*/
+
+#registerForm{
+
+    animation:fadeUp .8s ease;
+
+}
+
+/*------------------------------------
+Responsive
+------------------------------------*/
+
+@media(max-width:992px){
+
+    .auth-container{
+
+        min-height:auto;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .left-section{
+
+        padding:30px;
+
+    }
+
+    .strength-meter{
+
+        height:7px;
+
+    }
+
+}
+
+@media(max-width:480px){
+
+    .left-section{
+
+        padding:22px;
+
+    }
+
+    #strengthText{
+
+        font-size:12px;
+
+    }
+
+}

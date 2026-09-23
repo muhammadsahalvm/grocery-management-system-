@@ -1,0 +1,85 @@
+/* owner_category.css
+   Only minimal additions on top of owner_management.css
+   ─────────────────────────────────────────────────────── */
+
+/* ── Category image in the table ── */
+.owner-management-body .category-image {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #f0f7f1;
+}
+
+/* ── Back button: text-decoration fix (add-btn handles colors) ── */
+.owner-management-body .cat-back-btn {
+    text-decoration: none;
+}
+
+/* ── Category card: h2 label on left, form fills the right ── */
+.owner-management-body .category-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+.owner-management-body .category-card > h2 {
+    flex: 0 0 180px;
+    margin: 0;
+    padding-top: 4px;
+    font-size: 14px;
+    color: #20382d;
+}
+
+.owner-management-body .category-card form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    /* no max-width — let it fill the right side */
+}
+
+.owner-management-body .category-card form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.owner-management-body .category-card form label {
+    color: #64786b;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* submit button matches add-btn — no extra width override needed */
+
+/* ── Table header: title left, search group right ── */
+.owner-management-body .cat-table-header {
+    justify-content: space-between;
+}
+
+.owner-management-body .cat-table-header > h2 {
+    flex: 1;
+    margin: 0;
+    font-size: 14px;
+    color: #20382d;
+}
+
+.owner-management-body .cat-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* fix input inside search wrap — override flex:1 from owner_management */
+.owner-management-body .cat-search-wrap input {
+    flex: 0 0 220px;
+    width: 220px;
+}
+
+/* search button — inherits add-btn style, just ensure no border-box issues */
+.owner-management-body .cat-search-wrap .add-btn {
+    white-space: nowrap;
+}

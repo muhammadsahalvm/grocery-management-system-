@@ -1,0 +1,165 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block content %}
+
+    <a href="{% url 'owner_dashboard' %}">
+        ← Back to Dashboard
+    </a>
+
+<div class="page-header">
+    <h2>Section Management</h2>
+</div>
+
+<!-- Messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Add Section Form -->
+<div class="card">
+
+    <h3>Add New Section</h3>
+
+    <form method="POST" action="{% url 'add_section' %}">
+
+        {% csrf_token %}
+
+        <div>
+
+            <label>Section Name</label>
+
+            <input
+                type="text"
+                name="section_name"
+                required>
+
+        </div>
+
+        <div>
+
+            <label>Rack Number</label>
+
+            <input
+                type="text"
+                name="rack_number"
+                required>
+
+        </div>
+
+        <br>
+
+        <button type="submit">
+
+            Add Section
+
+        </button>
+
+    </form>
+
+</div>
+
+<br>
+
+<!-- Section Table -->
+
+<table border="1" cellpadding="10">
+
+    <thead>
+
+        <tr>
+
+            <th>ID</th>
+
+            <th>Section Name</th>
+
+            <th>Rack Number</th>
+
+            <th>Status</th>
+
+            <th>Actions</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for section in sections %}
+
+        <tr>
+
+            <td>{{ section.id }}</td>
+
+            <td>{{ section.section_name }}</td>
+
+            <td>{{ section.rack_number }}</td>
+
+            <td>
+
+                {% if section.is_active %}
+
+                    Active
+
+                {% else %}
+
+                    Inactive
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                <!-- Edit -->
+
+                <button
+                    class="edit-btn"
+                    data-id="{{ section.id }}"
+                    data-name="{{ section.section_name }}"
+                    data-rack="{{ section.rack_number }}"
+                    data-url="{% url 'edit_section' section.id %}">
+
+                    Edit
+
+                </button>
+
+                <!-- Delete -->
+
+                <button
+                    class="delete-btn"
+                    data-url="{% url 'delete_section' section.id %}">
+
+                    Delete
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="5">
+
+                No Sections Found
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+<script src="{% static 'js/owner_section.js' %}"></script>
+
+{% endblock %}

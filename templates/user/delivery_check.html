@@ -1,0 +1,88 @@
+{% extends 'base/base_user.html' %}
+{% load static %}
+
+{% block title %}Check Delivery Coverage | SalamMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container" style="max-width: 680px;">
+    <!-- Breadcrumbs -->
+    <nav class="nav-back-group" aria-label="Breadcrumb">
+        <a href="{% url 'user_home' %}" class="btn-back-nav">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Store</span>
+        </a>
+        <a href="{% url 'user_profile' %}" class="btn-back-nav">
+            <i class="bi bi-person"></i>
+            <span>My Profile</span>
+        </a>
+    </nav>
+
+    <div class="coverage-check-card">
+        <div class="coverage-icon-wrap">
+            <i class="bi bi-geo-alt-fill"></i>
+        </div>
+        <h1 class="page-title text-center">Delivery Coverage</h1>
+        <p class="page-subtitle text-center">Enter your 6-digit postal pincode below to check if SalamMart delivers fresh groceries to your neighborhood.</p>
+
+        <form method="POST" action="{% url 'check_delivery_availability' %}" class="coverage-form">
+            {% csrf_token %}
+            <div class="form-group-field">
+                <label for="pincode" class="field-label">Area Pincode</label>
+                <div class="input-with-action">
+                    <input 
+                        type="text" 
+                        id="pincode" 
+                        name="pincode" 
+                        class="field-input" 
+                        placeholder="e.g. 560001" 
+                        pattern="[0-9]{6}"
+                        maxlength="6"
+                        required 
+                        autofocus>
+                    <button type="submit" class="btn-hero-primary" style="padding: 0.75rem 1.4rem;">
+                        <span>Check Status</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        {% if checked %}
+            <div class="coverage-result-box">
+                {% if delivery and delivery.is_available %}
+                    <div class="status-alert alert-available">
+                        <div class="alert-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div class="alert-content">
+                            <h3>Express Delivery is Available in Your Area!</h3>
+                            <p>We deliver fresh groceries, vegetables, and pantry items to <strong>{{ delivery.locality }}</strong>.</p>
+                            <div class="alert-detail-badge">
+                                <span>Delivery Fee: <strong>₹{{ delivery.delivery_charge }}</strong> (Free above ₹499)</span>
+                            </div>
+                            <div style="margin-top: 1rem;">
+                                <a href="{% url 'user_home' %}#products" class="btn-hero-primary" style="display: inline-flex; font-size: 0.85rem; padding: 0.55rem 1.25rem;">
+                                    <span>Start Shopping Now</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="status-alert alert-unavailable">
+                        <div class="alert-icon">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </div>
+                        <div class="alert-content">
+                            <h3>Currently Unavailable in this Pincode</h3>
+                            <p>We are actively expanding our supply routes to reach this locality soon. Please stay tuned as we launch new hubs weekly!</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
