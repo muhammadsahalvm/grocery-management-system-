@@ -2,11 +2,6 @@
 {% load static %}
 
 {% block extra_css %}
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="{% static 'css/owner_order.css' %}">
-
 {% endblock %}
 
 {% block page_title %}
@@ -15,307 +10,151 @@ Orders
 
 {% block content %}
 
-<div>
-
-    <a href="{% url 'owner_dashboard' %}">
-        ← Back to Dashboard
-    </a>
-
-    <h1>
-        Order Management
-    </h1>
-
-    <p>
-        View and manage customer orders.
-    </p>
-
+<div class="page-header">
+    <div>
+        <a href="{% url 'owner_dashboard' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <h1>Order Management</h1>
+        <p>Monitor, search, and update customer order fulfillment.</p>
+    </div>
 </div>
-
 
 <!-- Statistics -->
-
-<div>
-
-    <div>
-
-        <span>
-            Total Orders
-        </span>
-
-        <strong>
-            {{ total_orders }}
-        </strong>
-
+<div class="stats-container">
+    <div class="stat-card">
+        <h3>Total Orders</h3>
+        <span>{{ total_orders }}</span>
     </div>
-
-
-    <div>
-
-        <span>
-            Pending
-        </span>
-
-        <strong>
-            {{ pending_orders }}
-        </strong>
-
+    <div class="stat-card">
+        <h3>Pending</h3>
+        <span>{{ pending_orders }}</span>
     </div>
-
-
-    <div>
-
-        <span>
-            Delivered
-        </span>
-
-        <strong>
-            {{ delivered_orders }}
-        </strong>
-
+    <div class="stat-card">
+        <h3>Delivered</h3>
+        <span>{{ delivered_orders }}</span>
     </div>
-
-
-    <div>
-
-        <span>
-            Cancelled
-        </span>
-
-        <strong>
-            {{ cancelled_orders }}
-        </strong>
-
+    <div class="stat-card">
+        <h3>Cancelled</h3>
+        <span>{{ cancelled_orders }}</span>
     </div>
-
 </div>
 
+<!-- Search / Filters Toolbar -->
+<form method="GET" class="table-toolbar">
+    <div style="position: relative; flex: 1; min-width: 220px;">
+        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+        <input
+            type="text"
+            name="search"
+            placeholder="Search by order # or customer..."
+            value="{{ search }}"
+            style="padding-left: 36px; width: 100%;">
+    </div>
 
-<!-- Search / Filters -->
-
-<form method="GET">
-
-    <input
-        type="text"
-        name="search"
-        placeholder="Search order or customer..."
-        value="{{ search }}">
-
-
-    <select name="status">
-
-        <option value="">
-            All Order Status
-        </option>
-
+    <select name="status" style="min-width: 170px;">
+        <option value="">All Order Status</option>
         {% for value, label in status_choices %}
-
-        <option
-            value="{{ value }}"
-            {% if selected_status == value %}
-            selected
-            {% endif %}>
-
-            {{ label }}
-
-        </option>
-
+            <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>
+                {{ label }}
+            </option>
         {% endfor %}
-
     </select>
 
-
-    <select name="payment_status">
-
-        <option value="">
-            All Payment Status
-        </option>
-
+    <select name="payment_status" style="min-width: 170px;">
+        <option value="">All Payment Status</option>
         {% for value, label in payment_status_choices %}
-
-        <option
-            value="{{ value }}"
-            {% if selected_payment_status == value %}
-            selected
-            {% endif %}>
-
-            {{ label }}
-
-        </option>
-
+            <option value="{{ value }}" {% if selected_payment_status == value %}selected{% endif %}>
+                {{ label }}
+            </option>
         {% endfor %}
-
     </select>
 
-
-    <button type="submit">
-        Search
+    <button type="submit" class="add-btn" style="min-height: 42px;">
+        <i class="bi bi-funnel"></i> Filter
     </button>
-
+    {% if search or selected_status or selected_payment_status %}
+        <a href="{% url 'owner_order' %}" class="status-btn" style="min-height: 42px; display: inline-flex; align-items: center; padding: 0 1rem;">
+            Reset
+        </a>
+    {% endif %}
 </form>
 
-
-<!-- Orders -->
-
-<table>
-
-    <thead>
-
-        <tr>
-
-            <th>#</th>
-
-            <th>Order</th>
-
-            <th>Customer</th>
-
-            <th>Items</th>
-
-            <th>Total</th>
-
-            <th>Payment</th>
-
-            <th>Delivery</th>
-
-            <th>Status</th>
-
-            <th>Date</th>
-
-            <th>Action</th>
-
-        </tr>
-
-    </thead>
-
-
-    <tbody>
-
-    {% for o in orders %}
-
-        <tr>
-
-            <td>
-                {{ forloop.counter }}
-            </td>
-
-            <td>
-                {{ o.order_number }}
-            </td>
-
-            <td>
-
-                {{ o.customer.name }}
-
-                <br>
-
-                {{ o.customer.phone }}
-
-            </td>
-
-            <td>
-
-                {{ o.items.count }}
-
-            </td>
-
-            <td>
-
-                ₹{{ o.total_amount }}
-
-            </td>
-
-            <td>
-
-                {{ o.get_payment_method_display }}
-
-                <br>
-
-                {{ o.get_payment_status_display }}
-
-            </td>
-
-            <td>
-
-                {% if o.delivery_type == "scheduled" %}
-
-                <strong>
-                    Scheduled
-                </strong>
-
-                <br>
-
-                {% if o.scheduled_date %}
-                    {{ o.scheduled_date|date:"d M Y" }}
-                {% endif %}
-
-                <br>
-
-                {% if o.scheduled_slot %}
-                    {{ o.scheduled_slot }}
-                {% endif %}
-
-            {% else %}
-
-                <strong>
-                    ASAP
-                </strong>
-
-            {% endif %}
-
-            {% if o.delivery_area %}
-
-                <br>
-
-                {{ o.delivery_area.locality }}
-
-                <br>
-
-                {{ o.delivery_area.pincode }}
-
-            {% endif %}
-
-            </td>
-
-            <td>
-
-                {{ o.get_status_display }}
-
-            </td>
-
-            <td>
-
-                {{ o.created_at|date:"d M Y, h:i A" }}
-
-            </td>
-
-            <td>
-
-                <a
-                    href="{% url 'order_details' o.id %}">
-
-                    View Details
-
-                </a>
-
-            </td>
-
-        </tr>
-
-    {% empty %}
-
-        <tr>
-
-            <td colspan="10">
-
-                No Orders Found
-
-            </td>
-
-        </tr>
-
-    {% endfor %}
-
-    </tbody>
-
-</table>
+<!-- Orders Table -->
+<div class="table-card">
+    <div class="table-header">
+        <h2 style="font-size: 1.1rem; margin: 0;"><i class="bi bi-receipt"></i> Orders List</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Delivery</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in orders %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>#{{ o.order_number }}</strong></td>
+                    <td>
+                        <div style="font-weight: 600;">{{ o.customer.name }}</div>
+                        <div style="font-size: 0.75rem; color: var(--color-text-muted);">{{ o.customer.phone }}</div>
+                    </td>
+                    <td><span class="status-badge" style="background: var(--color-surface-hover); color: var(--color-text);">{{ o.items.count }} items</span></td>
+                    <td><strong>₹{{ o.total_amount }}</strong></td>
+                    <td>
+                        <div style="font-weight: 500;">{{ o.get_payment_method_display }}</div>
+                        <small style="color: var(--color-text-muted);">{{ o.get_payment_status_display }}</small>
+                    </td>
+                    <td>
+                        {% if o.delivery_type == "scheduled" %}
+                            <span class="status-badge" style="background: #eef2ff; color: #4338ca;">Scheduled</span>
+                            {% if o.scheduled_date %}
+                                <div style="font-size: 0.72rem; color: var(--color-text-muted); margin-top: 2px;">{{ o.scheduled_date|date:"d M Y" }}</div>
+                            {% endif %}
+                            {% if o.scheduled_slot %}
+                                <div style="font-size: 0.72rem; color: var(--color-text-muted);">{{ o.scheduled_slot }}</div>
+                            {% endif %}
+                        {% else %}
+                            <span class="status-badge" style="background: #f0fdf4; color: #15803d;">Standard</span>
+                        {% endif %}
+                        {% if o.delivery_area %}
+                            <div style="font-size: 0.72rem; color: var(--color-text-muted); margin-top: 2px;">{{ o.delivery_area.locality }} ({{ o.delivery_area.pincode }})</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="owner-status owner-status-{{ o.status }}">
+                            {{ o.get_status_display }}
+                        </span>
+                    </td>
+                    <td style="white-space: nowrap; font-size: 0.8125rem; color: var(--color-text-muted);">
+                        {{ o.created_at|date:"d M Y, h:i A" }}
+                    </td>
+                    <td>
+                        <a href="{% url 'order_details' o.id %}" class="edit-btn">
+                            <i class="bi bi-eye"></i> Details
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="10" style="text-align: center; color: var(--color-text-muted); padding: var(--space-6);">
+                        <i class="bi bi-inbox" style="font-size: 2rem; display: block; margin-bottom: var(--space-2);"></i>
+                        No Orders Found
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}

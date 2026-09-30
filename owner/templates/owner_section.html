@@ -1,164 +1,112 @@
 {% extends "base_dashboard.html" %}
 {% load static %}
 
+{% block page_title %}
+Sections
+{% endblock %}
+
 {% block content %}
 
-    <a href="{% url 'owner_dashboard' %}">
-        ← Back to Dashboard
-    </a>
-
 <div class="page-header">
-    <h2>Section Management</h2>
+    <div>
+        <a href="{% url 'owner_dashboard' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <h1>Section Management</h1>
+        <p>Organize physical store aisles, grocery sections, and rack locations.</p>
+    </div>
 </div>
 
-<!-- Messages -->
-{% if messages %}
-    {% for message in messages %}
-        <div class="message {{ message.tags }}">
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endif %}
 
-<!-- Add Section Form -->
+
+<!-- Add Section Form Card -->
 <div class="card">
-
-    <h3>Add New Section</h3>
-
+    <h3><i class="bi bi-grid-3x3-gap-fill" style="color: var(--color-primary);"></i> Add New Store Section</h3>
     <form method="POST" action="{% url 'add_section' %}">
-
         {% csrf_token %}
-
         <div>
-
-            <label>Section Name</label>
-
+            <label for="section-name">Section Name</label>
             <input
+                id="section-name"
                 type="text"
                 name="section_name"
+                placeholder="e.g. Dairy & Eggs, Fresh Produce"
                 required>
-
         </div>
 
         <div>
-
-            <label>Rack Number</label>
-
+            <label for="rack-number">Assigned Rack Number / Code</label>
             <input
+                id="rack-number"
                 type="text"
                 name="rack_number"
+                placeholder="e.g. R-101, Aisle-3"
                 required>
-
         </div>
 
-        <br>
-
-        <button type="submit">
-
-            Add Section
-
+        <button type="submit" class="add-btn">
+            <i class="bi bi-plus-lg"></i> Add Section
         </button>
-
     </form>
-
 </div>
 
-<br>
-
-<!-- Section Table -->
-
-<table border="1" cellpadding="10">
-
-    <thead>
-
-        <tr>
-
-            <th>ID</th>
-
-            <th>Section Name</th>
-
-            <th>Rack Number</th>
-
-            <th>Status</th>
-
-            <th>Actions</th>
-
-        </tr>
-
-    </thead>
-
-    <tbody>
-
-        {% for section in sections %}
-
-        <tr>
-
-            <td>{{ section.id }}</td>
-
-            <td>{{ section.section_name }}</td>
-
-            <td>{{ section.rack_number }}</td>
-
-            <td>
-
-                {% if section.is_active %}
-
-                    Active
-
-                {% else %}
-
-                    Inactive
-
-                {% endif %}
-
-            </td>
-
-            <td>
-
-                <!-- Edit -->
-
-                <button
-                    class="edit-btn"
-                    data-id="{{ section.id }}"
-                    data-name="{{ section.section_name }}"
-                    data-rack="{{ section.rack_number }}"
-                    data-url="{% url 'edit_section' section.id %}">
-
-                    Edit
-
-                </button>
-
-                <!-- Delete -->
-
-                <button
-                    class="delete-btn"
-                    data-url="{% url 'delete_section' section.id %}">
-
-                    Delete
-
-                </button>
-
-            </td>
-
-        </tr>
-
-        {% empty %}
-
-        <tr>
-
-            <td colspan="5">
-
-                No Sections Found
-
-            </td>
-
-        </tr>
-
-        {% endfor %}
-
-    </tbody>
-
-</table>
+<!-- Section Table Card -->
+<div class="table-card">
+    <div class="table-header">
+        <h2 style="font-size: 1.1rem; margin: 0;"><i class="bi bi-layout-three-columns"></i> Store Sections ({{ sections|length }})</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Section Name</th>
+                <th>Rack Number</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for section in sections %}
+                <tr>
+                    <td>{{ section.id }}</td>
+                    <td><strong>{{ section.section_name }}</strong></td>
+                    <td><span class="status-badge" style="background: var(--color-surface-hover); color: var(--color-text); font-family: monospace;">{{ section.rack_number }}</span></td>
+                    <td>
+                        {% if section.is_active %}
+                            <span class="status-badge in-stock">Active</span>
+                        {% else %}
+                            <span class="status-badge out-stock">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <button
+                            type="button"
+                            class="edit-btn"
+                            data-id="{{ section.id }}"
+                            data-name="{{ section.section_name }}"
+                            data-rack="{{ section.rack_number }}"
+                            data-url="{% url 'edit_section' section.id %}">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                        <button
+                            type="button"
+                            class="delete-btn"
+                            data-url="{% url 'delete_section' section.id %}">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: var(--space-6);">
+                        <i class="bi bi-grid" style="font-size: 2rem; display: block; margin-bottom: var(--space-2);"></i>
+                        No Sections Found
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 <script src="{% static 'js/owner_section.js' %}"></script>
 

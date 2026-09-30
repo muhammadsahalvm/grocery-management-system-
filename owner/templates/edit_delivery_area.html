@@ -2,11 +2,6 @@
 {% load static %}
 
 {% block extra_css %}
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="{% static 'css/edit_delivery_area.css' %}">
-
 {% endblock %}
 
 {% block page_title %}
@@ -15,78 +10,73 @@ Edit Delivery Area
 
 {% block content %}
 
-<div>
-
-    <a href="{% url 'owner_delivery_area' %}">
-        ← Back to Delivery Areas
-    </a>
-
-    <h1>
-        Edit Delivery Area
-    </h1>
-
+<div class="page-header">
+    <div>
+        <a href="{% url 'owner_delivery_area' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Delivery Areas
+        </a>
+        <h1>Edit Delivery Area</h1>
+        <p>Update locality name, pincode, delivery fee, or availability status.</p>
+    </div>
 </div>
 
+<div class="card" style="max-width: 680px;">
+    <h3><i class="bi bi-pencil-square" style="color: var(--color-primary);"></i> Area Details</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="locality-input">Locality Name</label>
+            <input
+                id="locality-input"
+                type="text"
+                name="locality"
+                value="{{ area.locality }}"
+                required>
+        </div>
 
-<form
-    method="POST">
+        <div>
+            <label for="pincode-input">Postal Pincode</label>
+            <input
+                id="pincode-input"
+                type="text"
+                name="pincode"
+                value="{{ area.pincode }}"
+                maxlength="10"
+                required>
+        </div>
 
-    {% csrf_token %}
+        <div>
+            <label for="charge-input">Delivery Charge (₹)</label>
+            <input
+                id="charge-input"
+                type="number"
+                name="delivery_charge"
+                value="{{ area.delivery_charge }}"
+                min="0"
+                step="0.01"
+                required>
+        </div>
 
-    <label>
-        Locality
-    </label>
+        <div style="display: flex; align-items: center; padding-top: 1.5rem;">
+            <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.875rem;">
+                <input
+                    type="checkbox"
+                    name="is_available"
+                    {% if area.is_available %}checked{% endif %}
+                    style="width: 18px; height: 18px; min-height: 18px; accent-color: var(--color-primary);">
+                Available for delivery
+            </label>
+        </div>
 
-    <input
-        type="text"
-        name="locality"
-        value="{{ area.locality }}"
-        required>
-
-
-    <label>
-        Pincode
-    </label>
-
-    <input
-        type="text"
-        name="pincode"
-        value="{{ area.pincode }}"
-        maxlength="10"
-        required>
-
-
-    <label>
-        Delivery Charge
-    </label>
-
-    <input
-        type="number"
-        name="delivery_charge"
-        value="{{ area.delivery_charge }}"
-        min="0"
-        step="0.01"
-        required>
-
-
-    <label>
-
-        <input
-            type="checkbox"
-            name="is_available"
-            {% if area.is_available %}
-            checked
-            {% endif %}>
-
-        Available for delivery
-
-    </label>
-
-
-    <button type="submit">
-        Save Changes
-    </button>
-
-</form>
+        <div style="grid-column: 1 / -1; display: flex; gap: var(--space-3); margin-top: var(--space-2);">
+            <button type="submit" class="add-btn">
+                <i class="bi bi-check2"></i> Save Changes
+            </button>
+            <a href="{% url 'owner_delivery_area' %}" class="status-btn" style="min-height: 40px; display: inline-flex; align-items: center; padding: 0 1.25rem;">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
 
 {% endblock %}

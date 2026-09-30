@@ -11,22 +11,20 @@ href="{% static 'css/owner_staff.css' %}">
 
 {% block content %}
 
-    <a href="{% url 'owner_dashboard' %}">
-        ← Back to Dashboard
-    </a>
-
 <div class="page-header">
-
-    <h2>Staff Management</h2>
+    <div>
+        <a href="{% url 'owner_dashboard' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <h1>Staff Management</h1>
+        <p>Manage store staff members, credentials, salaries, and operational permissions.</p>
+    </div>
 
     <button
         id="addStaffBtn"
         class="add-btn">
-
-        + Add Staff
-
+        <i class="bi bi-person-plus-fill"></i> Add Staff
     </button>
-
 </div>
 
 <div class="stats-container">
@@ -173,245 +171,94 @@ href="{% static 'css/owner_staff.css' %}">
         {% endfor %}
 
         </tbody>
-
     </table>
-
-    <div id="addStaffModal" class="modal-overlay">
-
-        <div class="modal-box">
-
-            <h2>Add Staff</h2>
-
-            <form
-                method="POST"
-                action="{% url 'owner_staff' %}">
-
-                {% csrf_token %}
-
-                <div class="form-group">
-
-                    <label>Staff Name</label>
-
-                    <input
-                        type="text"
-                        name="staff_name"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Password</label>
-
-                    <input
-                        type="password"
-                        name="password"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Salary</label>
-
-                    <input
-                        type="number"
-                        step="0.01"
-                        name="salary"
-                        required>
-
-                </div>
-
-                <div class="modal-buttons">
-
-                    <button
-                        type="button"
-                        class="cancel-btn"
-                        onclick="closeAddStaffModal()">
-
-                        Cancel
-
-                    </button>
-
-                    <button
-                        type="submit">
-
-                        Save Staff
-
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-    <div id="editStaffModal" class="modal-overlay">
-
-        <div class="modal-box">
-
-            <h2>Edit Staff</h2>
-
-            <form
-                id="editStaffForm"
-                method="POST">
-
-                {% csrf_token %}
-
-                <div class="form-group">
-
-                    <label>Name</label>
-
-                    <input
-                        type="text"
-                        name="staff_name"
-                        id="editStaffName"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Username</label>
-
-                    <input
-                        type="text"
-                        id="editUsername"
-                        readonly>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Password</label>
-
-                    <input
-                        type="text"
-                        name="password"
-                        id="editPassword"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Salary</label>
-
-                    <input
-                        type="number"
-                        step="0.01"
-                        name="salary"
-                        id="editSalary"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Status</label>
-
-                    <select
-                        name="is_active"
-                        id="editStatus">
-
-                        <option value="True">
-
-                            Active
-
-                        </option>
-
-                        <option value="False">
-
-                            Inactive
-
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div class="modal-buttons">
-
-                    <button
-                        type="button"
-                        class="cancel-btn"
-                        onclick="closeEditStaffModal()">
-
-                        Cancel
-
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="confirm-delete-btn">
-
-                        Update
-
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-    <div id="deleteStaffModal" class="modal-overlay">
-
-        <div class="modal-box">
-
-            <div class="modal-icon">
-
-                🗑️
-
+</div>
+
+<!-- Add Staff Modal -->
+<div id="addStaffModal" class="modal-overlay">
+    <div class="modal-box">
+        <h2>Add New Staff</h2>
+        <form method="POST" action="{% url 'owner_staff' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Staff Name</label>
+                <input type="text" name="staff_name" placeholder="Full name of staff member" required>
             </div>
 
-            <h2>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Create staff login password" required>
+            </div>
 
-                Delete Staff
-
-            </h2>
-
-            <p>
-
-                Are you sure you want to delete this staff?
-
-            </p>
-
-            <small>
-
-                This action cannot be undone.
-
-            </small>
+            <div class="form-group">
+                <label>Salary (₹)</label>
+                <input type="number" step="0.01" name="salary" placeholder="0.00" required>
+            </div>
 
             <div class="modal-buttons">
+                <button type="button" class="cancel-btn" onclick="closeAddStaffModal()">Cancel</button>
+                <button type="submit">Save Staff</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-                <button
-                    type="button"
-                    class="cancel-btn"
-                    onclick="closeDeleteStaffModal()">
-
-                    Cancel
-
-                </button>
-
-                <a
-                    id="confirmDeleteStaffBtn"
-                    class="confirm-delete-btn">
-
-                    Delete
-
-                </a>
-
+<!-- Edit Staff Modal -->
+<div id="editStaffModal" class="modal-overlay">
+    <div class="modal-box">
+        <h2>Edit Staff Member</h2>
+        <form id="editStaffForm" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="staff_name" id="editStaffName" required>
             </div>
 
-        </div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="editUsername" readonly style="background: var(--color-surface-soft); cursor: not-allowed;">
+            </div>
 
+            <div class="form-group">
+                <label>Password</label>
+                <input type="text" name="password" id="editPassword" required>
+            </div>
+
+            <div class="form-group">
+                <label>Salary (₹)</label>
+                <input type="number" step="0.01" name="salary" id="editSalary" required>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="is_active" id="editStatus">
+                    <option value="True">Active</option>
+                    <option value="False">Inactive</option>
+                </select>
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" class="cancel-btn" onclick="closeEditStaffModal()">Cancel</button>
+                <button type="submit">Update Staff</button>
+            </div>
+        </form>
     </div>
+</div>
 
+<!-- Delete Staff Modal -->
+<div id="deleteStaffModal" class="modal-overlay">
+    <div class="modal-box modal-box-confirm">
+        <div class="modal-icon">
+            <i class="bi bi-trash3-fill"></i>
+        </div>
+        <h2>Delete Staff</h2>
+        <p>Are you sure you want to delete this staff member?</p>
+        <small>This action cannot be undone.</small>
+        <div class="modal-buttons">
+            <button type="button" class="cancel-btn" onclick="closeDeleteStaffModal()">Cancel</button>
+            <a id="confirmDeleteStaffBtn" class="confirm-delete-btn">Delete</a>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

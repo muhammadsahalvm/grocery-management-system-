@@ -95,6 +95,66 @@
     --container-pad: 1.5rem;
     --header-height: 74px;
     --topbar-height: 36px;
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 72px;
+
+    /* ==========================================
+       SPACING SCALE
+    ========================================== */
+    --space-1: 0.25rem;   /* 4px */
+    --space-2: 0.5rem;    /* 8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.25rem;   /* 20px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-7: 2rem;      /* 32px */
+    --space-8: 2.5rem;    /* 40px */
+    --space-9: 3rem;      /* 48px */
+
+    /* ==========================================
+       TYPOGRAPHY SCALE
+    ========================================== */
+    --font-size-2xs: 0.6875rem; /* 11px */
+    --font-size-xs: 0.75rem;    /* 12px */
+    --font-size-sm: 0.875rem;   /* 14px */
+    --font-size-base: 1rem;     /* 16px */
+    --font-size-md: 1.125rem;   /* 18px */
+    --font-size-lg: 1.25rem;    /* 20px */
+    --font-size-xl: 1.5rem;     /* 24px */
+    --font-size-2xl: 1.75rem;   /* 28px */
+    --font-size-3xl: 2.25rem;   /* 36px */
+    --font-size-4xl: 3rem;      /* 48px */
+
+    /* ==========================================
+       SHARED ALIASES FOR COMPONENT UNIFICATION
+    ========================================== */
+    --primary: var(--color-primary);
+    --primary-dark: var(--color-primary-dark);
+    --primary-light: var(--color-primary-light);
+    --primary-subtle: var(--color-primary-subtle);
+    --accent: var(--color-accent);
+    --accent-light: var(--color-accent-light);
+    --accent-hover: var(--color-accent-hover);
+    --bg: var(--color-bg);
+    --surface: var(--color-surface);
+    --surface-soft: var(--color-surface-soft);
+    --surface-hover: var(--color-surface-hover);
+    --text: var(--color-text);
+    --text-secondary: var(--color-text-secondary);
+    --text-muted: var(--color-text-muted);
+    --text-light: var(--color-text-light);
+    --text-white: var(--color-text-white);
+    --border: var(--color-border);
+    --border-light: var(--color-border-light);
+    --border-hover: var(--color-border-hover);
+    --success: var(--color-success);
+    --success-bg: var(--color-success-bg);
+    --warning: var(--color-warning);
+    --warning-bg: var(--color-warning-bg);
+    --danger: var(--color-danger);
+    --danger-bg: var(--color-danger-bg);
+    --info: var(--color-info);
+    --info-bg: var(--color-info-bg);
 
     /* ==========================================
        TRANSITIONS

@@ -119,44 +119,101 @@
 
 
 /* ==========================================
+   MOBILE CONTROLS & BACKDROP
+========================================== */
+
+.mobile-sidebar-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: 1.25rem;
+    margin-right: var(--space-3);
+    transition: all var(--transition-fast);
+}
+
+.mobile-sidebar-toggle:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary-light);
+}
+
+.sidebar-close-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-left: auto;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    transition: all var(--transition-fast);
+}
+
+.sidebar-close-btn:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text);
+}
+
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.sidebar-backdrop.show {
+    display: block;
+    opacity: 1;
+}
+
+/* ==========================================
    MOBILE
 ========================================== */
 
 @media (max-width: 900px) {
 
+    .mobile-sidebar-toggle {
+        display: inline-flex;
+    }
+
+    .sidebar-close-btn {
+        display: inline-flex;
+    }
+
     .app-sidebar {
-
         transform: translateX(-100%);
-
+        box-shadow: var(--shadow-xl);
     }
 
     .app-sidebar.open {
-
         transform: translateX(0);
-
     }
 
     .main-content {
-
         width: 100%;
-
         margin-left: 0;
-
     }
 
     .app-header {
-
-        padding:
-            0
-            var(--space-5);
-
+        padding: 0 var(--space-5);
     }
 
     .page-container {
-
-        padding:
-            var(--space-5);
-
+        padding: var(--space-5);
     }
 
 }

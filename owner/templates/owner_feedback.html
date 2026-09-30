@@ -2,11 +2,6 @@
 {% load static %}
 
 {% block extra_css %}
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="{% static 'css/owner_feedback.css' %}">
-
 {% endblock %}
 
 {% block page_title %}
@@ -15,296 +10,133 @@ Feedback
 
 {% block content %}
 
-<div>
-
-    <a href="{% url 'owner_dashboard' %}">
-        ← Back to Dashboard
-    </a>
-
-    <h1>
-        Customer Feedback
-    </h1>
-
-    <p>
-        Review customer feedback and product ratings.
-    </p>
-
+<div class="page-header">
+    <div>
+        <a href="{% url 'owner_dashboard' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <h1>Customer Feedback</h1>
+        <p>Review customer product ratings, reviews, and control storefront visibility.</p>
+    </div>
 </div>
-
 
 <!-- Statistics -->
-
-<div>
-
-    <div>
-
-        <span>
-            Total Feedback
-        </span>
-
-        <strong>
-            {{ total_feedback }}
-        </strong>
-
+<div class="stats-container" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+    <div class="stat-card">
+        <h3>Total Feedback</h3>
+        <span>{{ total_feedback }}</span>
     </div>
-
-
-    <div>
-
-        <span>
-            Visible
-        </span>
-
-        <strong>
-            {{ visible_feedback }}
-        </strong>
-
+    <div class="stat-card">
+        <h3>Visible on Store</h3>
+        <span>{{ visible_feedback }}</span>
     </div>
-
-
-    <div>
-
-        <span>
-            Hidden
-        </span>
-
-        <strong>
-            {{ hidden_feedback }}
-        </strong>
-
+    <div class="stat-card">
+        <h3>Hidden</h3>
+        <span>{{ hidden_feedback }}</span>
     </div>
-
 </div>
 
+<!-- Search / Filters Toolbar -->
+<form method="GET" class="table-toolbar">
+    <div style="position: relative; flex: 1; min-width: 220px;">
+        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+        <input
+            type="text"
+            name="search"
+            placeholder="Search by customer, product, or feedback text..."
+            value="{{ search }}"
+            style="padding-left: 36px; width: 100%;">
+    </div>
 
-<!-- Search / Filters -->
-
-<form method="GET">
-
-    <input
-        type="text"
-        name="search"
-        placeholder="Search customer, product or feedback..."
-        value="{{ search }}">
-
-
-    <select name="rating">
-
-        <option value="">
-            All Ratings
-        </option>
-
-        <option
-            value="5"
-            {% if selected_rating == "5" %}
-            selected
-            {% endif %}>
-
-            5 Stars
-
-        </option>
-
-        <option
-            value="4"
-            {% if selected_rating == "4" %}
-            selected
-            {% endif %}>
-
-            4 Stars
-
-        </option>
-
-        <option
-            value="3"
-            {% if selected_rating == "3" %}
-            selected
-            {% endif %}>
-
-            3 Stars
-
-        </option>
-
-        <option
-            value="2"
-            {% if selected_rating == "2" %}
-            selected
-            {% endif %}>
-
-            2 Stars
-
-        </option>
-
-        <option
-            value="1"
-            {% if selected_rating == "1" %}
-            selected
-            {% endif %}>
-
-            1 Star
-
-        </option>
-
+    <select name="rating" style="min-width: 150px;">
+        <option value="">All Ratings</option>
+        <option value="5" {% if selected_rating == "5" %}selected{% endif %}>5 Stars (Excellent)</option>
+        <option value="4" {% if selected_rating == "4" %}selected{% endif %}>4 Stars (Good)</option>
+        <option value="3" {% if selected_rating == "3" %}selected{% endif %}>3 Stars (Average)</option>
+        <option value="2" {% if selected_rating == "2" %}selected{% endif %}>2 Stars (Poor)</option>
+        <option value="1" {% if selected_rating == "1" %}selected{% endif %}>1 Star (Terrible)</option>
     </select>
 
-
-    <select name="visibility">
-
-        <option value="">
-            All Feedback
-        </option>
-
-        <option
-            value="visible"
-            {% if selected_visibility == "visible" %}
-            selected
-            {% endif %}>
-
-            Visible
-
-        </option>
-
-        <option
-            value="hidden"
-            {% if selected_visibility == "hidden" %}
-            selected
-            {% endif %}>
-
-            Hidden
-
-        </option>
-
+    <select name="visibility" style="min-width: 150px;">
+        <option value="">All Visibility</option>
+        <option value="visible" {% if selected_visibility == "visible" %}selected{% endif %}>Visible</option>
+        <option value="hidden" {% if selected_visibility == "hidden" %}selected{% endif %}>Hidden</option>
     </select>
 
-
-    <button type="submit">
-        Search
+    <button type="submit" class="add-btn" style="min-height: 42px;">
+        <i class="bi bi-funnel"></i> Filter
     </button>
-
+    {% if search or selected_rating or selected_visibility %}
+        <a href="{% url 'owner_feedback' %}" class="status-btn" style="min-height: 42px; display: inline-flex; align-items: center; padding: 0 1rem;">
+            Reset
+        </a>
+    {% endif %}
 </form>
 
-
 <!-- Feedback Table -->
-
-<table>
-
-    <thead>
-
-        <tr>
-
-            <th>#</th>
-
-            <th>Customer</th>
-
-            <th>Product</th>
-
-            <th>Rating</th>
-
-            <th>Feedback</th>
-
-            <th>Status</th>
-
-            <th>Date</th>
-
-            <th>Action</th>
-
-        </tr>
-
-    </thead>
-
-
-    <tbody>
-
-    {% for f in feedbacks %}
-
-        <tr>
-
-            <td>
-                {{ forloop.counter }}
-            </td>
-
-            <td>
-
-                {{ f.customer.name }}
-
-                <br>
-
-                {{ f.customer.username }}
-
-            </td>
-
-            <td>
-                {{ f.product.product_name }}
-            </td>
-
-            <td>
-
-                {{ f.rating }}/5
-
-            </td>
-
-            <td>
-
-                {{ f.feedback }}
-
-            </td>
-
-            <td>
-
-                {% if f.is_visible %}
-
-                    Visible
-
-                {% else %}
-
-                    Hidden
-
-                {% endif %}
-
-            </td>
-
-            <td>
-
-                {{ f.created_at|date:"d M Y, h:i A" }}
-
-            </td>
-
-            <td>
-
-                <a
-                    href="{% url 'toggle_feedback_visibility' f.id %}">
-
-                    {% if f.is_visible %}
-
-                        Hide
-
-                    {% else %}
-
-                        Show
-
-                    {% endif %}
-
-                </a>
-
-            </td>
-
-        </tr>
-
-    {% empty %}
-
-        <tr>
-
-            <td colspan="8">
-
-                No Feedback Found
-
-            </td>
-
-        </tr>
-
-    {% endfor %}
-
-    </tbody>
-
-</table>
+<div class="table-card">
+    <div class="table-header">
+        <h2 style="font-size: 1.1rem; margin: 0;"><i class="bi bi-chat-square-text"></i> Customer Reviews</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Rating</th>
+                <th>Review Content</th>
+                <th>Visibility</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in feedbacks %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <div style="font-weight: 600;">{{ f.customer.name }}</div>
+                        <small style="color: var(--color-text-muted);">@{{ f.customer.username }}</small>
+                    </td>
+                    <td><strong>{{ f.product.product_name }}</strong></td>
+                    <td style="white-space: nowrap;">
+                        <span style="font-weight: 700; color: #b45309;">{{ f.rating }}</span>
+                        <i class="bi bi-star-fill" style="color: #f59e0b; font-size: 0.8125rem;"></i>
+                    </td>
+                    <td style="max-width: 320px; line-height: 1.45; font-size: 0.85rem; color: var(--color-text);">
+                        “{{ f.feedback }}”
+                    </td>
+                    <td>
+                        {% if f.is_visible %}
+                            <span class="status-badge in-stock">Visible</span>
+                        {% else %}
+                            <span class="status-badge out-stock">Hidden</span>
+                        {% endif %}
+                    </td>
+                    <td style="white-space: nowrap; font-size: 0.8125rem; color: var(--color-text-muted);">
+                        {{ f.created_at|date:"d M Y, h:i A" }}
+                    </td>
+                    <td>
+                        <a href="{% url 'toggle_feedback_visibility' f.id %}" class="status-btn">
+                            {% if f.is_visible %}
+                                <i class="bi bi-eye-slash"></i> Hide
+                            {% else %}
+                                <i class="bi bi-eye"></i> Show
+                            {% endif %}
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: var(--space-6);">
+                        <i class="bi bi-chat-square-dots" style="font-size: 2rem; display: block; margin-bottom: var(--space-2);"></i>
+                        No Feedback Found
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}

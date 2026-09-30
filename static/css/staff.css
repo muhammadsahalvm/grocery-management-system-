@@ -4,7 +4,7 @@
 
 .welcome-card{
 
-    background:linear-gradient(135deg,#2E7D32,#43A047);
+    background:linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
 
     color:white;
 
@@ -2986,9 +2986,15 @@
 
     margin: 0;
 
-    background: #163f2b;
+    background: #0f2c1c;
 
-    font-family: "Poppins", sans-serif;
+    background-image: radial-gradient(#185936 1.2px, transparent 1.2px), radial-gradient(#185936 1.2px, #0f2c1c 1.2px);
+
+    background-size: 48px 48px;
+
+    background-position: 0 0, 24px 24px;
+
+    font-family: var(--font-body);
 
 }
 
