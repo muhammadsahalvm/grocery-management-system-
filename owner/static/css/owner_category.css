@@ -27,8 +27,9 @@
     flex: 0 0 180px;
     margin: 0;
     padding-top: 4px;
-    font-size: 14px;
-    color: #20382d;
+    font-size: 1rem;
+    font-family: var(--font-heading);
+    color: var(--color-text);
 }
 
 .owner-management-body .category-card form {
@@ -63,8 +64,9 @@
 .owner-management-body .cat-table-header > h2 {
     flex: 1;
     margin: 0;
-    font-size: 14px;
-    color: #20382d;
+    font-size: 1.1rem;
+    font-family: var(--font-heading);
+    color: var(--color-text);
 }
 
 .owner-management-body .cat-search-wrap {

@@ -2,11 +2,6 @@
 {% load static %}
 
 {% block extra_css %}
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="{% static 'css/owner_customer.css' %}">
-
 {% endblock %}
 
 {% block page_title %}
@@ -15,224 +10,119 @@ Customers
 
 {% block content %}
 
-<div>
-
-     <a href="{% url 'owner_dashboard' %}">
-        ← Back to Dashboard
-    </a>
-
-    <h1>
-        Customer Management
-    </h1>
-
-    <p>
-        Manage registered customers and view their order activity.
-    </p>
-
+<div class="page-header">
+    <div>
+        <a href="{% url 'owner_dashboard' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <h1>Customer Management</h1>
+        <p>Manage registered shoppers, activity profiles, and account statuses.</p>
+    </div>
 </div>
-
 
 <!-- Statistics -->
-
-<div>
-
-    <div>
-        <span>Total Customers</span>
-        <strong>{{ total_customers }}</strong>
+<div class="stats-container" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+    <div class="stat-card">
+        <h3>Total Customers</h3>
+        <span>{{ total_customers }}</span>
     </div>
-
-    <div>
-        <span>Active Customers</span>
-        <strong>{{ active_customers }}</strong>
+    <div class="stat-card">
+        <h3>Active Customers</h3>
+        <span>{{ active_customers }}</span>
     </div>
-
-    <div>
-        <span>Inactive Customers</span>
-        <strong>{{ inactive_customers }}</strong>
+    <div class="stat-card">
+        <h3>Inactive Customers</h3>
+        <span>{{ inactive_customers }}</span>
     </div>
-
 </div>
 
+<!-- Search & Filter Toolbar -->
+<form method="GET" class="table-toolbar">
+    <div style="position: relative; flex: 1; min-width: 220px;">
+        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+        <input
+            type="text"
+            name="search"
+            placeholder="Search by customer name, email, or phone..."
+            value="{{ search }}"
+            style="padding-left: 36px; width: 100%;">
+    </div>
 
-<!-- Search -->
-
-<form method="GET">
-
-    <input
-        type="text"
-        name="search"
-        placeholder="Search customer..."
-        value="{{ search }}">
-
-
-    <select name="status">
-
-        <option
-            value=""
-            {% if not selected_status %}
-            selected
-            {% endif %}>
-
-            All Customers
-
-        </option>
-
-        <option
-            value="active"
-            {% if selected_status == "active" %}
-            selected
-            {% endif %}>
-
-            Active
-
-        </option>
-
-        <option
-            value="inactive"
-            {% if selected_status == "inactive" %}
-            selected
-            {% endif %}>
-
-            Inactive
-
-        </option>
-
+    <select name="status" style="min-width: 170px;">
+        <option value="" {% if not selected_status %}selected{% endif %}>All Customers</option>
+        <option value="active" {% if selected_status == "active" %}selected{% endif %}>Active</option>
+        <option value="inactive" {% if selected_status == "inactive" %}selected{% endif %}>Inactive</option>
     </select>
 
-
-    <button type="submit">
-        Search
+    <button type="submit" class="add-btn" style="min-height: 42px;">
+        <i class="bi bi-search"></i> Search
     </button>
-
+    {% if search or selected_status %}
+        <a href="{% url 'owner_customer' %}" class="status-btn" style="min-height: 42px; display: inline-flex; align-items: center; padding: 0 1rem;">
+            Reset
+        </a>
+    {% endif %}
 </form>
 
-
-<!-- Customers -->
-
-<table>
-
-    <thead>
-
-        <tr>
-
-            <th>#</th>
-
-            <th>Name</th>
-
-            <th>Username</th>
-
-            <th>Email</th>
-
-            <th>Phone</th>
-
-            <th>Orders</th>
-
-            <th>Total Spending</th>
-
-            <th>Status</th>
-
-            <th>Action</th>
-
-        </tr>
-
-    </thead>
-
-
-    <tbody>
-
-    {% for c in customers %}
-
-        <tr>
-
-            <td>
-                {{ forloop.counter }}
-            </td>
-
-            <td>
-                {{ c.name }}
-            </td>
-
-            <td>
-                {{ c.username }}
-            </td>
-
-            <td>
-                {{ c.email }}
-            </td>
-
-            <td>
-                {{ c.phone }}
-            </td>
-
-            <td>
-                {{ c.total_orders }}
-            </td>
-
-            <td>
-                ₹{{ c.total_spending|default:"0.00" }}
-            </td>
-
-            <td>
-
-                {% if c.is_active %}
-
-                    <span>
-                        Active
-                    </span>
-
-                {% else %}
-
-                    <span>
-                        Inactive
-                    </span>
-
-                {% endif %}
-
-            </td>
-
-
-            <td>
-
-                <a
-                href="{% url 'customer_details' c.id %}">
-
-                View Details
-
-                </a>
-
-                <a
-                    href="{% url 'toggle_customer_status' c.id %}">
-
-                    {% if c.is_active %}
-
-                        Deactivate
-
-                    {% else %}
-
-                        Activate
-
-                    {% endif %}
-
-                </a>
-
-            </td>
-
-        </tr>
-
-    {% empty %}
-
-        <tr>
-
-            <td colspan="9">
-                No Customers Found
-            </td>
-
-        </tr>
-
-    {% endfor %}
-
-    </tbody>
-
-</table>
+<!-- Customers Table -->
+<div class="table-card">
+    <div class="table-header">
+        <h2 style="font-size: 1.1rem; margin: 0;"><i class="bi bi-people"></i> Customers Directory</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Orders</th>
+                <th>Total Spending</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in customers %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>{{ c.name }}</strong></td>
+                    <td style="color: var(--color-text-secondary);">@{{ c.username }}</td>
+                    <td>{{ c.email }}</td>
+                    <td>{{ c.phone }}</td>
+                    <td><span class="status-badge" style="background: var(--color-surface-hover); color: var(--color-text);">{{ c.total_orders }} orders</span></td>
+                    <td><strong>₹{{ c.total_spending|default:"0.00" }}</strong></td>
+                    <td>
+                        {% if c.is_active %}
+                            <span class="status-badge in-stock">Active</span>
+                        {% else %}
+                            <span class="status-badge out-stock">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <a href="{% url 'customer_details' c.id %}" class="edit-btn">
+                            <i class="bi bi-eye"></i> Details
+                        </a>
+                        <a href="{% url 'toggle_customer_status' c.id %}" class="status-btn">
+                            {% if c.is_active %}
+                                Deactivate
+                            {% else %}
+                                Activate
+                            {% endif %}
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--color-text-muted); padding: var(--space-6);">
+                        <i class="bi bi-person-x" style="font-size: 2rem; display: block; margin-bottom: var(--space-2);"></i>
+                        No Customers Found
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}

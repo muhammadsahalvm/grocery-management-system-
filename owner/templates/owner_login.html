@@ -1,223 +1,173 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salam Mart | Owner Login</title>
+    <title>Owner Login | Salam Mart</title>
 
-    <!-- Google Font -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Manrope:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <!-- Design Tokens & Shared CSS -->
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/staff.css' %}">
 </head>
 
-<body>
+<body class="staff-login-body">
+<div class="staff-login-page">
+    <div class="staff-login-card">
 
-<div class="background-overlay"></div>
+        <!-- ==================================
+             LEFT LOGIN PANEL
+        =================================== -->
+        <section class="staff-login-form-panel">
+            <div class="staff-login-form-container">
 
-<div class="auth-container">
+                <!-- Logo -->
+                <div class="staff-login-logo">
+                    <div class="staff-login-logo-icon">
+                        <i class="bi bi-basket2-fill"></i>
+                    </div>
+                    <span>Salam Mart</span>
+                </div>
 
-    <!-- ================= LEFT SIDE ================= -->
+                <!-- Heading -->
+                <div class="staff-login-heading">
+                    <span class="login-eyebrow">Owner Portal</span>
+                    <h1>Sign In</h1>
+                    <p>Welcome back. Please enter your credentials to manage your store.</p>
+                </div>
 
-    <div class="left-section">
+                <!-- Error Messages -->
+                {% if error %}
+                <div class="staff-login-messages">
+                    <div class="staff-login-message" style="background: var(--color-danger-bg); color: var(--color-danger); border: 1px solid #fecdca;">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                </div>
+                {% endif %}
 
-        <div class="logo-box">
-            <img src="{% static 'images/salammartlogo.png' %}" alt="Salam Mart Logo">
-        </div>
+                {% if messages %}
+                <div class="staff-login-messages">
+                    {% for message in messages %}
+                    <div class="staff-login-message">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-        <h1>
-            Welcome Back
-        </h1>
+                <!-- Login Form -->
+                <form method="POST" action="{% url 'owner_login' %}" class="staff-login-form">
+                    {% csrf_token %}
 
-        <p class="subtitle">
-            Login to manage products, inventory, customers and deliveries.
-        </p>
+                    <!-- Username -->
+                    <div class="login-field">
+                        <label for="ownerUsername">Username</label>
+                        <div class="login-input-wrapper">
+                            <i class="bi bi-person"></i>
+                            <input
+                                type="text"
+                                id="ownerUsername"
+                                name="username"
+                                placeholder="Enter username"
+                                autocomplete="username"
+                                required
+                                autofocus>
+                        </div>
+                    </div>
 
-        {% if error %}
-        <div class="error-box">
-            {{ error }}
-        </div>
-        {% endif %}
+                    <!-- Password -->
+                    <div class="login-field">
+                        <div class="password-label-row">
+                            <label for="ownerPassword">Password</label>
+                        </div>
+                        <div class="login-input-wrapper">
+                            <i class="bi bi-lock"></i>
+                            <input
+                                type="password"
+                                id="ownerPassword"
+                                name="password"
+                                placeholder="Enter password"
+                                autocomplete="current-password"
+                                required>
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="toggleOwnerPassword"
+                                aria-label="Toggle password visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
 
-        <form method="POST" action="{% url 'owner_login' %}" id="loginForm">
+                    <!-- Submit Button -->
+                    <button type="submit" class="staff-login-button">
+                        Sign In
+                    </button>
+                </form>
 
-            {% csrf_token %}
-
-            <!-- Username -->
-
-            <div class="input-group">
-
-                <label>
-                    Username
-                </label>
-
-                <div class="input-box">
-
-                    <i class="fa-solid fa-user"></i>
-
-                    <input
-                        type="text"
-                        name="username"
-                        id="username"
-                        placeholder="Enter Username"
-                        required>
-
+                <!-- Footer -->
+                <div class="staff-login-footer">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <span>Authorized store owners only</span>
                 </div>
 
             </div>
+        </section>
 
-            <!-- Password -->
+        <!-- ==================================
+             RIGHT VISUAL PANEL
+        =================================== -->
+        <section class="staff-login-visual-panel">
+            <div class="staff-login-quote">
+                <span class="quote-mark">“</span>
+                <p>Lead your store with complete control over inventory, orders, staff, and business growth.</p>
+                <span class="quote-mark quote-end">”</span>
+            </div>
 
-            <div class="input-group">
-
-                <label>
-                    Password
-                </label>
-
-                <div class="input-box">
-
-                    <i class="fa-solid fa-lock"></i>
-
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        placeholder="Enter Password"
-                        required>
-
-                    <span class="togglePassword">
-                        <i class="fa-solid fa-eye"></i>
-                    </span>
-
+            <div class="staff-login-role">
+                <div class="role-icon">
+                    <i class="bi bi-shield-check"></i>
                 </div>
-
+                <div>
+                    <strong>Store Owner</strong>
+                    <span>Salam Mart Business Suite</span>
+                </div>
             </div>
-
-            <div class="login-options">
-
-                <label class="remember-me">
-
-                    <input type="checkbox">
-
-                    Remember Me
-
-                </label>
-
-                <a href="#">
-                    Forgot Password?
-                </a>
-
-            </div>
-
-            <button type="submit" class="login-btn">
-
-                <i class="fa-solid fa-arrow-right-to-bracket"></i>
-
-                Login
-
-            </button>
-
-        </form>
-
-        <div class="divider">
-
-            <span></span>
-
-            <p>Salam Mart</p>
-
-            <span></span>
-
-        </div>
-
-        <div class="register-link">
-
-            Don't have an account?
-
-            <a href="{% url 'owner_registration' %}">
-                Create Account
-            </a>
-
-        </div>
-
-    </div>
-
-    <!-- ================= RIGHT SIDE ================= -->
-
-    <div class="right-section">
-
-        <div class="image-container">
 
             <img
-                src="{% static 'images/grocery.png' %}"
-                alt="Grocery Illustration">
-
-        </div>
-
-        <div class="floating-card top-card">
-
-            <i class="fa-solid fa-basket-shopping"></i>
-
-            <div>
-
-                <h3>
-                    Fresh Inventory
-                </h3>
-
-                <p>
-                    Manage products effortlessly
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="floating-card bottom-card">
-
-            <i class="fa-solid fa-truck-fast"></i>
-
-            <div>
-
-                <h3>
-                    Fast Delivery
-                </h3>
-
-                <p>
-                    Serve every customer on time
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="stats-card">
-
-            <h2>
-                2500+
-            </h2>
-
-            <p>
-                Happy Customers
-            </p>
-
-        </div>
+                src="{% static 'images/login/grocery-illustration.png' %}"
+                alt="Salam Mart grocery illustration"
+                class="staff-login-illustration">
+        </section>
 
     </div>
-
 </div>
 
-<script src="{% static 'js/login.js' %}"></script>
+<script>
+const passwordInput = document.getElementById("ownerPassword");
+const passwordToggle = document.getElementById("toggleOwnerPassword");
+
+if (passwordToggle && passwordInput) {
+    passwordToggle.addEventListener("click", function() {
+        const isPassword = passwordInput.type === "password";
+        passwordInput.type = isPassword ? "text" : "password";
+        passwordToggle.innerHTML = isPassword
+            ? '<i class="bi bi-eye-slash"></i>'
+            : '<i class="bi bi-eye"></i>';
+    });
+}
+</script>
 
 </body>
-
 </html>

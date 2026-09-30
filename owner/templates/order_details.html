@@ -2,11 +2,6 @@
 {% load static %}
 
 {% block extra_css %}
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="{% static 'css/order_details.css' %}">
-
 {% endblock %}
 
 {% block page_title %}
@@ -15,336 +10,128 @@ Order Details
 
 {% block content %}
 
-<div>
-
-    <a href="{% url 'owner_order' %}">
-        ← Back to Orders
-    </a>
-
+<div class="page-header">
+    <div>
+        <a href="{% url 'owner_order' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Orders
+        </a>
+        <h1>Order #{{ order.order_number }}</h1>
+        <p>{{ order.created_at|date:"d M Y, h:i A" }}</p>
+    </div>
 </div>
 
-
-<div>
-
-    <h1>
-        Order {{ order.order_number }}
-    </h1>
-
-    <p>
-        {{ order.created_at|date:"d M Y, h:i A" }}
-    </p>
-
+<div class="stats-container" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+    <div class="stat-card">
+        <h3>Total Amount</h3>
+        <span>₹{{ order.total_amount }}</span>
+    </div>
+    <div class="stat-card">
+        <h3>Payment Status</h3>
+        <span>{{ order.get_payment_status_display }}</span>
+    </div>
+    <div class="stat-card">
+        <h3>Order Status</h3>
+        <span class="status-badge owner-status-{{ order.status }}">{{ order.get_status_display }}</span>
+    </div>
 </div>
 
+<!-- Customer & Delivery Grid -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-bottom: var(--space-5);">
+    <div class="card" style="margin: 0;">
+        <h3><i class="bi bi-person"></i> Customer Information</h3>
+        <p><strong>Name:</strong> {{ order.customer.name }}</p>
+        <p><strong>Username:</strong> {{ order.customer.username }}</p>
+        <p><strong>Phone:</strong> {{ order.customer.phone }}</p>
+        <p><strong>Email:</strong> {{ order.customer.email }}</p>
+    </div>
 
-<!-- Customer -->
-
-<div>
-
-    <h3>
-        Customer
-    </h3>
-
-    <p>
-        <strong>Name:</strong>
-        {{ order.customer.name }}
-    </p>
-
-    <p>
-        <strong>Username:</strong>
-        {{ order.customer.username }}
-    </p>
-
-    <p>
-        <strong>Phone:</strong>
-        {{ order.customer.phone }}
-    </p>
-
-    <p>
-        <strong>Email:</strong>
-        {{ order.customer.email }}
-    </p>
-
-</div>
-
-
-<!-- Delivery -->
-
-<div>
-
-    <h3>
-        Delivery Information
-    </h3>
-
-    <p>
-        <strong>Address:</strong>
-    </p>
-
-    <p>
-        {{ order.address }}
-    </p>
-
-
-    <p>
-
-        <strong>
-            Delivery Area:
-        </strong>
-
-        {% if order.delivery_area %}
-
-            {{ order.delivery_area.locality }}
-            -
-            {{ order.delivery_area.pincode }}
-
-        {% else %}
-
-            Not specified
-
-        {% endif %}
-
-    </p>
-
-
-    <p>
-
-        <strong>
-            Delivery Charge:
-        </strong>
-
-        {% if order.delivery_area %}
-
-            ₹{{ order.delivery_area.delivery_charge }}
-
-        {% else %}
-
-            ₹0.00
-
-        {% endif %}
-
-    </p>
-
-
-    <p>
-
-        <strong>
-            Delivery Type:
-        </strong>
-
-        {{ order.get_delivery_type_display }}
-
-    </p>
-
-
-    {% if order.delivery_type == "scheduled" %}
-
+    <div class="card" style="margin: 0;">
+        <h3><i class="bi bi-geo-alt"></i> Delivery Information</h3>
+        <p><strong>Address:</strong> {{ order.address }}</p>
         <p>
-
-            <strong>
-                Scheduled Date:
-            </strong>
-
-            {% if order.scheduled_date %}
-
-                {{ order.scheduled_date|date:"d M Y" }}
-
+            <strong>Delivery Area:</strong>
+            {% if order.delivery_area %}
+                {{ order.delivery_area.locality }} - {{ order.delivery_area.pincode }}
             {% else %}
-
                 Not specified
-
             {% endif %}
-
         </p>
-
-
         <p>
-
-            <strong>
-                Scheduled Slot:
-            </strong>
-
-            {% if order.scheduled_slot %}
-
-                {{ order.scheduled_slot }}
-
+            <strong>Delivery Charge:</strong>
+            {% if order.delivery_area %}
+                ₹{{ order.delivery_area.delivery_charge }}
             {% else %}
-
-                Not specified
-
+                ₹0.00
             {% endif %}
-
         </p>
+        <p><strong>Delivery Type:</strong> {{ order.get_delivery_type_display }}</p>
+        {% if order.delivery_type == "scheduled" %}
+            <p><strong>Scheduled Date:</strong> {{ order.scheduled_date|date:"d M Y"|default:"Not specified" }}</p>
+            <p><strong>Scheduled Slot:</strong> {{ order.scheduled_slot|default:"Not specified" }}</p>
+        {% endif %}
+    </div>
+</div>
 
+<!-- Status Management Pane -->
+<div class="card">
+    <h3><i class="bi bi-arrow-repeat"></i> Update Order Status</h3>
+    {% if order.status != "delivered" and order.status != "cancelled" %}
+        <form method="POST" action="{% url 'update_order_status' order.id %}" style="display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap;">
+            {% csrf_token %}
+            <div style="flex: 1; min-width: 200px;">
+                <label for="status-select">Select New Status</label>
+                <select name="status" id="status-select">
+                    {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" style="align-self: flex-end; margin-top: 0;">
+                <i class="bi bi-check2"></i> Update Status
+            </button>
+        </form>
+    {% else %}
+        <p style="color: var(--color-text-muted); font-size: 0.9rem;">
+            This order is marked as <strong>{{ order.get_status_display|lower }}</strong> and can no longer be modified.
+        </p>
     {% endif %}
-
 </div>
 
-
-<!-- Payment -->
-
-<div>
-
-    <h3>
-        Payment
-    </h3>
-
-    <p>
-        <strong>Method:</strong>
-        {{ order.get_payment_method_display }}
-    </p>
-
-    <p>
-        <strong>Payment Status:</strong>
-        {{ order.get_payment_status_display }}
-    </p>
-
-</div>
-
-
-<!-- Order Status -->
-
-<p>
-    Current Status:
-    <strong>
-        {{ order.get_status_display }}
-    </strong>
-</p>
-
-
-{% if order.status != "delivered" and order.status != "cancelled" %}
-
-<form
-    method="POST"
-    action="{% url 'update_order_status' order.id %}">
-
-    {% csrf_token %}
-
-    <select name="status">
-
-       {% for value, label in status_choices %}
-
-        <option
-            value="{{ value }}"
-            {% if order.status == value %}
-            selected
-            {% endif %}>
-
-            {{ label }}
-
-        </option>
-
-        {% endfor %}
-
-    </select>
-
-
-    <button type="submit">
-
-        Update Status
-
-    </button>
-
-</form>
-
-{% else %}
-
-<p>
-    This order is {{ order.get_status_display|lower }}
-    and can no longer be modified.
-</p>
-
-{% endif %}
-
-
-<!-- Products -->
-
-<div>
-
-    <h3>
-        Ordered Products
-    </h3>
-
-
+<!-- Products Table -->
+<div class="table-card">
+    <div class="table-header">
+        <h2 style="font-size: 1.1rem; margin: 0;"><i class="bi bi-box-seam"></i> Ordered Items ({{ items|length }})</h2>
+    </div>
     <table>
-
         <thead>
-
             <tr>
-
                 <th>#</th>
-
                 <th>Product</th>
-
                 <th>Quantity</th>
-
                 <th>Unit Price</th>
-
                 <th>Total</th>
-
             </tr>
-
         </thead>
-
-
         <tbody>
-
-        {% for item in items %}
-
-            <tr>
-
-                <td>
-                    {{ forloop.counter }}
-                </td>
-
-                <td>
-                    {{ item.product_name }}
-                </td>
-
-                <td>
-                    {{ item.quantity }}
-                </td>
-
-                <td>
-                    ₹{{ item.unit_price }}
-                </td>
-
-                <td>
-                    ₹{{ item.total_price }}
-                </td>
-
-            </tr>
-
-        {% empty %}
-
-            <tr>
-
-                <td colspan="5">
-                    No products found for this order.
-                </td>
-
-            </tr>
-
-        {% endfor %}
-
+            {% for item in items %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>{{ item.product_name }}</strong></td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.unit_price }}</td>
+                    <td><strong>₹{{ item.total_price }}</strong></td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--color-text-muted);">
+                        No products found for this order.
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
-
     </table>
-
-</div>
-
-
-<!-- Total -->
-
-<div>
-
-    <h3>
-        Order Total
-    </h3>
-
-    <strong>
-        ₹{{ order.total_amount }}
-    </strong>
-
 </div>
 
 {% endblock %}

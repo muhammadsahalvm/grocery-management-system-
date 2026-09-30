@@ -2,11 +2,6 @@
 {% load static %}
 
 {% block extra_css %}
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="{% static 'css/owner_delivery_area.css' %}">
-
 {% endblock %}
 
 {% block page_title %}
@@ -15,209 +10,162 @@ Delivery Areas
 
 {% block content %}
 
-<div>
-
-    <a href="{% url 'owner_dashboard' %}">
-        ← Back to Dashboard
-    </a>
-
-    <h1>
-        Delivery Area Management
-    </h1>
-
-    <p>
-        Manage localities and pincodes where delivery is available.
-    </p>
-
+<div class="page-header">
+    <div>
+        <a href="{% url 'owner_dashboard' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <h1>Delivery Area Management</h1>
+        <p>Configure serviceable localities, postal pincodes, and delivery fees.</p>
+    </div>
 </div>
-
 
 <!-- Statistics -->
-
-<div>
-
-    <div>
-        <span>Total Areas</span>
-        <strong>{{ total_areas }}</strong>
+<div class="stats-container" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+    <div class="stat-card">
+        <h3>Total Areas</h3>
+        <span>{{ total_areas }}</span>
     </div>
-
-    <div>
-        <span>Available</span>
-        <strong>{{ available_areas }}</strong>
+    <div class="stat-card">
+        <h3>Available Areas</h3>
+        <span>{{ available_areas }}</span>
     </div>
-
-    <div>
-        <span>Unavailable</span>
-        <strong>{{ unavailable_areas }}</strong>
+    <div class="stat-card">
+        <h3>Unavailable Areas</h3>
+        <span>{{ unavailable_areas }}</span>
     </div>
-
 </div>
 
-
-<!-- Add Delivery Area -->
-
-<div>
-
-    <h3>
-        Add Delivery Area
-    </h3>
-
-    <form
-        method="POST"
-        action="{% url 'add_delivery_area' %}">
-
+<!-- Add Delivery Area Form Card -->
+<div class="card">
+    <h3><i class="bi bi-geo-alt-fill" style="color: var(--color-primary);"></i> Add Serviceable Delivery Area</h3>
+    <form method="POST" action="{% url 'add_delivery_area' %}">
         {% csrf_token %}
-
-        <input
-            type="text"
-            name="locality"
-            placeholder="Locality"
-            required>
-
-        <input
-            type="text"
-            name="pincode"
-            placeholder="Pincode"
-            maxlength="10"
-            required>
-
-        <input
-            type="number"
-            name="delivery_charge"
-            placeholder="Delivery Charge"
-            min="0"
-            step="0.01"
-            value="0">
-
-        <label>
-
+        <div>
+            <label for="locality-input">Locality Name</label>
             <input
-                type="checkbox"
-                name="is_available"
-                checked>
+                id="locality-input"
+                type="text"
+                name="locality"
+                placeholder="e.g. Indiranagar, Koramangala"
+                required>
+        </div>
 
-            Available for delivery
+        <div>
+            <label for="pincode-input">Postal Pincode</label>
+            <input
+                id="pincode-input"
+                type="text"
+                name="pincode"
+                placeholder="e.g. 560038"
+                maxlength="10"
+                required>
+        </div>
 
-        </label>
+        <div>
+            <label for="charge-input">Delivery Charge (₹)</label>
+            <input
+                id="charge-input"
+                type="number"
+                name="delivery_charge"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                value="0">
+        </div>
 
-        <button type="submit">
-            Add Area
+        <div style="display: flex; align-items: center; justify-content: center; padding-top: 1.5rem;">
+            <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.875rem;">
+                <input
+                    type="checkbox"
+                    name="is_available"
+                    checked
+                    style="width: 18px; height: 18px; min-height: 18px; accent-color: var(--color-primary);">
+                Available for delivery
+            </label>
+        </div>
+
+        <button type="submit" class="add-btn">
+            <i class="bi bi-plus-lg"></i> Add Delivery Area
         </button>
-
     </form>
-
 </div>
 
+<!-- Search / Filter Toolbar -->
+<form method="GET" class="table-toolbar">
+    <div style="position: relative; flex: 1; min-width: 220px;">
+        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+        <input
+            type="text"
+            name="search"
+            placeholder="Search locality or pincode..."
+            value="{{ search }}"
+            style="padding-left: 36px; width: 100%;">
+    </div>
 
-<!-- Search -->
-
-<form method="GET">
-
-    <input
-        type="text"
-        name="search"
-        placeholder="Search locality or pincode..."
-        value="{{ search }}">
-
-    <button type="submit">
-        Search
+    <button type="submit" class="add-btn" style="min-height: 42px;">
+        <i class="bi bi-search"></i> Search
     </button>
-
+    {% if search %}
+        <a href="{% url 'owner_delivery_area' %}" class="status-btn" style="min-height: 42px; display: inline-flex; align-items: center; padding: 0 1rem;">
+            Reset
+        </a>
+    {% endif %}
 </form>
 
-
-<!-- Areas -->
-
-<table>
-
-    <thead>
-
-        <tr>
-
-            <th>#</th>
-
-            <th>Locality</th>
-
-            <th>Pincode</th>
-
-            <th>Delivery Charge</th>
-
-            <th>Status</th>
-
-            <th>Action</th>
-
-        </tr>
-
-    </thead>
-
-    <tbody>
-
-    {% for area in areas %}
-
-        <tr>
-
-            <td>
-                {{ forloop.counter }}
-            </td>
-
-            <td>
-                {{ area.locality }}
-            </td>
-
-            <td>
-                {{ area.pincode }}
-            </td>
-
-            <td>
-                ₹{{ area.delivery_charge }}
-            </td>
-
-            <td>
-
-                {% if area.is_available %}
-                    Available
-                {% else %}
-                    Unavailable
-                {% endif %}
-
-            </td>
-
-            <td>
-
-                <a
-                    href="{% url 'edit_delivery_area' area.id %}">
-                    Edit
-                </a>
-
-                <a
-                    href="{% url 'toggle_delivery_area' area.id %}">
-
-                    {% if area.is_available %}
-                        Disable
-                    {% else %}
-                        Enable
-                    {% endif %}
-
-                </a>
-
-            </td>
-
-        </tr>
-
-    {% empty %}
-
-        <tr>
-
-            <td colspan="6">
-                No Delivery Areas Found
-            </td>
-
-        </tr>
-
-    {% endfor %}
-
-    </tbody>
-
-</table>
+<!-- Areas Table Card -->
+<div class="table-card">
+    <div class="table-header">
+        <h2 style="font-size: 1.1rem; margin: 0;"><i class="bi bi-geo"></i> Service Coverage Areas</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Locality</th>
+                <th>Pincode</th>
+                <th>Delivery Charge</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for area in areas %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>{{ area.locality }}</strong></td>
+                    <td><span style="font-family: monospace; font-size: 0.9rem;">{{ area.pincode }}</span></td>
+                    <td><strong>₹{{ area.delivery_charge }}</strong></td>
+                    <td>
+                        {% if area.is_available %}
+                            <span class="status-badge in-stock">Available</span>
+                        {% else %}
+                            <span class="status-badge out-stock">Unavailable</span>
+                        {% endif %}
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <a href="{% url 'edit_delivery_area' area.id %}" class="edit-btn">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a href="{% url 'toggle_delivery_area' area.id %}" class="status-btn">
+                            {% if area.is_available %}
+                                Disable
+                            {% else %}
+                                Enable
+                            {% endif %}
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: var(--space-6);">
+                        <i class="bi bi-geo-alt" style="font-size: 2rem; display: block; margin-bottom: var(--space-2);"></i>
+                        No Delivery Areas Found
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}

@@ -5,8 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Owner Dashboard - Salam Mart</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Manrope:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/modal.css' %}">
     {% block extra_css %}{% endblock %}
@@ -32,15 +35,130 @@
 
         <div class="header-right">
             <span class="header-date" id="currentDate"></span>
-            <div class="header-notification">
+            <div class="header-notification" id="headerNotificationBtn" role="button" tabindex="0" aria-label="Notifications" aria-expanded="false">
                 <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-                <span class="notification-badge"></span>
+                {% if messages %}
+                    <span class="notification-badge" id="notificationBadge">{{ messages|length }}</span>
+                {% else %}
+                    <span class="notification-badge" id="notificationBadge" style="display: none;"></span>
+                {% endif %}
+
+                <!-- Notification Dropdown -->
+                <div class="notification-dropdown" id="notificationDropdown" onclick="event.stopPropagation();">
+                    <div class="notification-dropdown-header">
+                        <div class="notification-header-title">
+                            <i class="bi bi-bell-fill"></i>
+                            <span>Notifications</span>
+                        </div>
+                        {% if messages %}
+                            <span class="notification-count-tag" id="notificationCountTag">{{ messages|length }} new</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="notification-dropdown-body" id="notificationDropdownBody">
+                        {% if messages %}
+                            <div class="notification-list">
+                                {% for message in messages %}
+                                    <div class="notification-item notification-{{ message.tags|default:'info' }}">
+                                        <div class="notification-icon">
+                                            {% if 'success' in message.tags %}
+                                                <i class="bi bi-check-circle-fill"></i>
+                                            {% elif 'error' in message.tags or 'danger' in message.tags %}
+                                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                            {% elif 'warning' in message.tags %}
+                                                <i class="bi bi-exclamation-circle-fill"></i>
+                                            {% else %}
+                                                <i class="bi bi-info-circle-fill"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div class="notification-content">
+                                            <p class="notification-text">{{ message }}</p>
+                                            <span class="notification-time">Just now</span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="notification-empty">
+                                <i class="bi bi-bell-slash"></i>
+                                <p>No new notifications</p>
+                                <span>Recent actions and store alerts will show here.</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if messages %}
+                    <div class="notification-dropdown-footer" id="notificationDropdownFooter">
+                        <button type="button" class="notification-clear-btn" id="clearNotificationsBtn">
+                            <i class="bi bi-check2-all"></i> Mark all as read
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
-            <div class="header-profile">
+
+            <!-- Floating Toast Popups -->
+            {% if messages %}
+            <div class="toast-container" id="toastContainer">
+                {% for message in messages %}
+                <div class="toast-item toast-{{ message.tags|default:'info' }}">
+                    <div class="toast-icon">
+                        {% if 'success' in message.tags %}
+                            <i class="bi bi-check-circle-fill"></i>
+                        {% elif 'error' in message.tags or 'danger' in message.tags %}
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        {% elif 'warning' in message.tags %}
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                        {% else %}
+                            <i class="bi bi-info-circle-fill"></i>
+                        {% endif %}
+                    </div>
+                    <div class="toast-text">{{ message }}</div>
+                    <button type="button" class="toast-close" onclick="this.parentElement.remove()" aria-label="Close">&times;</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div class="header-profile" id="headerProfileBtn" role="button" tabindex="0" aria-label="Store Owner Menu" aria-expanded="false">
                 <div class="profile-avatar">{{ request.session.owner_name|first }}</div>
                 <div class="profile-info">
                     <p class="profile-name">{{ request.session.owner_name }}</p>
-                    <p class="profile-role">Store Owner</p>
+                    <p class="profile-role">
+                        Store Owner
+                        <svg class="profile-chevron" viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                    </p>
+                </div>
+
+                <!-- Store Owner Profile Dropdown -->
+                <div class="profile-dropdown" id="profileDropdown" onclick="event.stopPropagation();">
+                    <div class="profile-dropdown-header">
+                        <div class="profile-avatar-lg">{{ request.session.owner_name|first }}</div>
+                        <div class="profile-dropdown-meta">
+                            <span class="profile-dropdown-name">{{ request.session.owner_name }}</span>
+                            <span class="profile-dropdown-role">Store Owner</span>
+                        </div>
+                    </div>
+                    <div class="profile-dropdown-divider"></div>
+                    <div class="profile-dropdown-menu">
+                        <a href="{% url 'owner_registration' %}" class="profile-dropdown-item">
+                            <div class="profile-dropdown-icon">
+                                <i class="bi bi-person-plus-fill"></i>
+                            </div>
+                            <div class="profile-dropdown-text">
+                                <span class="profile-dropdown-title">Register New Owner</span>
+                                <span class="profile-dropdown-desc">Add a co-owner account</span>
+                            </div>
+                        </a>
+                        <div class="profile-dropdown-divider"></div>
+                        <a href="{% url 'owner_logout' %}" class="profile-dropdown-item profile-dropdown-logout">
+                            <div class="profile-dropdown-icon">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </div>
+                            <div class="profile-dropdown-text">
+                                <span class="profile-dropdown-title">Logout</span>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
             <a href="{% url 'owner_logout' %}" class="logout-btn">Logout</a>

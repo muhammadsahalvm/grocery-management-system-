@@ -249,3 +249,44 @@ document.addEventListener(
 
     }
 );
+
+/* ==========================================
+   MOBILE SIDEBAR TOGGLE
+========================================== */
+document.addEventListener("DOMContentLoaded", function() {
+    const sidebar = document.querySelector(".app-sidebar");
+    const toggleBtn = document.getElementById("staffSidebarToggle");
+    const closeBtn = document.getElementById("staffSidebarClose");
+    const backdrop = document.getElementById("staffSidebarBackdrop");
+
+    function openSidebar() {
+        if (sidebar) sidebar.classList.add("open");
+        if (backdrop) backdrop.classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeSidebar() {
+        if (sidebar) sidebar.classList.remove("open");
+        if (backdrop) backdrop.classList.remove("show");
+        document.body.style.overflow = "";
+    }
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            if (sidebar && sidebar.classList.contains("open")) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", closeSidebar);
+    }
+
+    if (backdrop) {
+        backdrop.addEventListener("click", closeSidebar);
+    }
+});
